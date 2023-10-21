@@ -1,6 +1,6 @@
 # Template GoSwagger V2 RESTful API
 
-This package is a simple yet powerful representation of your RESTful API contains **GoSwagger 2.0** with customization for generated file authorization, routing, handler.
+This package is a simple yet powerful representation of your RESTful API contains **GoSwagger 2.0** with customization.
 
 ## Documentation
 
@@ -11,7 +11,7 @@ This package is a simple yet powerful representation of your RESTful API contain
 1. Generate server and Client `gen-dev`
 1. Serve the server API `make run`
 1. Now a simple RESTful API is serving at: `http::/localhost:8080`
-1. Next? you can customize this RESTful API based on [GoSagger](https://goswagger.io/)
+1. Next? you can customize this RESTful API based on [GoSwagger](https://goswagger.io/)
 
 ### Base Structure
 ```
@@ -77,11 +77,15 @@ make remove-cmd                 : remove folder /cmd
 make remove-executable-server   : remove file executable server at root directory /
 ```
 
-### Project Status
+## Postman Collections
+
+Example postman collection is [Here](https://api.postman.com/collections/27566000-8cf3cc54-e44b-428d-9749-26fc15eacad7?access_key=PMAT-01HD96P71AWTAQ832P96G3VEGM)
+
+## Project Status
 - Made with ♡.
 - Usages setup RESTful API using golang for learning and portfolio.
 
-### Released Version
+## Released Version
 
 - version 0.1 (21 October 2023)
 
