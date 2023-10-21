@@ -1,0 +1,105 @@
+# Swagger OpenAPI v2
+# note: 
+# please make sure naming of the components based on definition object name
+# and follow the code style
+swagger: "2.0"
+info:
+  description: "For basic structure template REST APIs using GoSwagger v2 developed by Damar"
+  title: "REST API Template GoSwagger v2 developed by Damar"
+  version: "1.0.0"
+produces:
+  - application/json
+consumes:
+  - application/json
+schemes:
+  - http
+host: "localhost:8080" #base url
+securityDefinitions:
+  key:
+    type: "apiKey"
+    in: "header"
+    name: "x-app-key"
+    description: "test"
+  hasRole:
+    type: apiKey
+    in: header
+    name: "x-access-role"
+  hasProvider:
+    type: apiKey
+    in: header
+    name: "x-provider-id"
+  isPeople:
+    type: apiKey
+    in: header
+    name: "x-people-id"
+security:
+  - key: []
+
+# --Start of paths
+paths:
+  # health
+  /health:
+    get:
+      summary: "health check server"
+      description: "endpoint for check health server"
+      tags:
+        - app
+      security:
+        - key: []
+          hasRole:  
+            - admin
+            - people
+          isPeople: []
+      responses: 
+        200:
+          $ref: "#/responses/defaultResponse"
+# --End of paths
+
+# --Start of definitions
+definitions:
+  defaultResponse:
+    description: definition for base response when request to endpoint was successful
+    type: object
+    properties:
+      code:
+        type: number
+        example: 200
+      message:
+        type: string
+        example: "successfully get the response"
+
+  # models data
+  principal:
+    type: object
+    properties:
+      sub:
+        type: string
+      email:
+        type: string
+      name:
+        type: string
+      role:
+        type: string
+      provider:
+        type: string
+      people:
+        type: string
+  # end of models data
+# --End of definitions
+
+# --Start of parameters
+parameters: {}
+# --End of parameters
+
+# --Start of responses
+responses:
+  defaultResponse:
+    description: response when request to endpoint was successful
+    schema:
+      $ref: "#/definitions/defaultResponse"
+# --End of responses
+
+
+
+
+

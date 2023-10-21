@@ -1,0 +1,19 @@
+# generated folder
+/gen
+/pkg
+/cmd
+
+# environtment configuration
+/configs/app.yaml
+.env
+
+# programs or output
+rest-goswagger-api-server
+*.o
+*.a
+*.so
+*.exe
+
+# credentials
+credentials.json
+sa.json

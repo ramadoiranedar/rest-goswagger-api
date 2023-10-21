@@ -1,0 +1,9 @@
+app:
+  name: "rest-goswagger-api"
+db:
+  host: "127.0.0.1"
+  user: "root"
+  pass: "root"
+  port: "3306"
+  name: "rest_goswagger_api"
+x_app_key: XXX
