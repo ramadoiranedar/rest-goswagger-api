@@ -14,20 +14,22 @@ import (
 )
 
 func NewRuntime(conf *viper.Viper, log logrus.FieldLogger) (*Runtime, error) {
-	// Database
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
+	dsn := fmt.Sprintf(
+		"%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
 		conf.GetString("db.user"),
 		conf.GetString("db.pass"),
 		conf.GetString("db.host"),
 		conf.GetString("db.port"),
-		conf.GetString("db.name"))
+		conf.GetString("db.name"),
+	)
+	// Instance MySQL database using Gorm
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{
 		Logger: logger.Default.LogMode(logger.Info),
 	})
 	if err != nil {
 		log.WithFields(logrus.Fields{
 			"module": "runtime",
-		}).Errorf("DB connection : %v", err)
+		}).Errorf("DB connection: %v", err)
 		os.Exit(1)
 	}
 
@@ -37,7 +39,7 @@ func NewRuntime(conf *viper.Viper, log logrus.FieldLogger) (*Runtime, error) {
 		Log:  log,
 	}
 
-	// run auto migrate the database
+	// Run auto migrate the database, if needed
 	rt.RunMigration()
 
 	return rt, nil
@@ -61,9 +63,9 @@ func (r *Runtime) Config() *viper.Viper {
 	return r.Conf
 }
 
-// TODO: close everything needed
+// TODO: Close everything needed
 func (r *Runtime) Close() {
-	return
+	// Add code here to close any resources if needed.
 }
 
 func (r *Runtime) SetError(code int, msg string, args ...interface{}) error {
@@ -79,6 +81,13 @@ func (r *Runtime) GetError(err error) errors.Error {
 }
 
 func (r *Runtime) RunMigration() {
-	r.Log.Infof("Migrating Database Tables")
-	r.Db.AutoMigrate()
+	r.Log.Infof("Migrating Database")
+	/*
+		*
+		*	Add code here to run database migrations.
+		*
+		r.Db.AutoMigrate(
+			models.TODO,
+		)
+	*/
 }

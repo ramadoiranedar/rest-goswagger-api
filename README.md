@@ -16,7 +16,7 @@ This package is a simple yet powerful representation of your RESTful API contain
 ### Base Structure
 ```
 
-├── api                 // for swagger api files
+├── api                 // for swagger api files eg. main server or more client
 ├── cmd                 // for main server files and customization files eg. cron job
 ├── configs             // for configuration files
 ├── gen                 // for swagger generated files (eg. models, server) configuration swagger
@@ -26,6 +26,7 @@ This package is a simple yet powerful representation of your RESTful API contain
 ├── internal            // for customization RESTful API files
 │   ├── handlers
 │   └── rest
+│   └── routes          // for define all route
 ├── main.go.dist        // this is a overwritten (Customized) main file from default generate by the GoSwagger. This file will auto move to main server folder
 ├── makefile            // for CLI Commands to this RESTful API files
 ├── pkg                 // for client generated files by swagger
@@ -51,9 +52,10 @@ From [GoSwagger](https://github.com/go-swagger/go-swagger): `go-swagger`` brings
 - Runtime
 - Authorization
 - Routing
-- Database client mysql
+- Database mysql
 - Configuration file (eg. environtment or secret, credentials)
 - Generated files and folders
+- ORM ([Gorm](https://github.com/go-gorm/gorm))
 - ...
 
 ### Makefile
