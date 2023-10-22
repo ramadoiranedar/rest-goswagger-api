@@ -153,15 +153,10 @@ func initConfig(log logrus.FieldLogger) *viper.Viper {
 
 	err := cfg.ReadInConfig()
 	if err != nil {
-		handleConfigError(log, err)
+		log.Errorf("Invalid app config at %s", mainFlags.AppConfig)
+		os.Exit(1)
 	}
 
 	log.Info("Configuration app is OK")
 	return cfg
 }
-
-func handleConfigError(log logrus.FieldLogger, err error) {
-	log.Errorf("Invalid app config at %s", mainFlags.AppConfig)
-	os.Exit(1)
-}
-
