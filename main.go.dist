@@ -22,6 +22,7 @@ import (
 	"github.com/ramadoiranedar/rest-goswagger-api/gen/restapi"
 	"github.com/ramadoiranedar/rest-goswagger-api/gen/restapi/operations"
 	"github.com/ramadoiranedar/rest-goswagger-api/internal/handlers"
+	"github.com/ramadoiranedar/rest-goswagger-api/internal/routes"
 	"github.com/ramadoiranedar/rest-goswagger-api/internal/rest"
 )
 
@@ -121,7 +122,7 @@ func configureAPI(rt *rest_goswagger_api.Runtime, api *operations.RestGoswaggerA
 }
 
 func setupRoutes(rt *rest_goswagger_api.Runtime, api *operations.RestGoswaggerAPIServerAPI, h *handlers.Handler) {
-	rest.Route(rt, api, *h)
+	routes.Route(rt, api, *h)
 }
 
 func createHandler(log logrus.FieldLogger, api *operations.RestGoswaggerAPIServerAPI) http.Handler {

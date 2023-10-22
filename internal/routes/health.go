@@ -11,7 +11,7 @@ import (
 	"github.com/ramadoiranedar/rest-goswagger-api/internal/handlers"
 )
 
-func SetRouteHealth(rt *rest_goswagger_api.Runtime, api *operations.RestGoswaggerAPIServerAPI, apiHandler handlers.Handler) {
+func setRouteHealth(rt *rest_goswagger_api.Runtime, api *operations.RestGoswaggerAPIServerAPI, apiHandler handlers.Handler) {
 
 	api.AppGetHealthHandler = app.GetHealthHandlerFunc(func(ghp app.GetHealthParams, p *models.Principal) middleware.Responder {
 
