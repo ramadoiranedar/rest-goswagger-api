@@ -13,6 +13,12 @@ import (
 	"gorm.io/gorm/logger"
 )
 
+type Runtime struct {
+	DbMysql *gorm.DB
+	Conf    *viper.Viper
+	Log     logrus.FieldLogger
+}
+
 func NewRuntime(conf *viper.Viper, log logrus.FieldLogger) (*Runtime, error) {
 	dbMysql, err := setGormMysqlDB(conf)
 	if err != nil {
@@ -32,12 +38,6 @@ func NewRuntime(conf *viper.Viper, log logrus.FieldLogger) (*Runtime, error) {
 	// rt.RunMigration()
 
 	return rt, nil
-}
-
-type Runtime struct {
-	DbMysql *gorm.DB
-	Conf    *viper.Viper
-	Log     logrus.FieldLogger
 }
 
 func (r *Runtime) DB() *gorm.DB {

@@ -2,6 +2,8 @@ package handlers
 
 import rest_goswagger_api "github.com/ramadoiranedar/rest-goswagger-api"
 
+type handler struct{}
+
 type Handler interface {
 	// TODO: handlers
 	HealthHandler
@@ -15,5 +17,3 @@ type HealthHandler interface {
 func NewHandler() Handler {
 	return &handler{}
 }
-
-type handler struct{}
