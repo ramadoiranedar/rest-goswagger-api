@@ -14,18 +14,7 @@ import (
 )
 
 func NewRuntime(conf *viper.Viper, log logrus.FieldLogger) (*Runtime, error) {
-	dsn := fmt.Sprintf(
-		"%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
-		conf.GetString("db.user"),
-		conf.GetString("db.pass"),
-		conf.GetString("db.host"),
-		conf.GetString("db.port"),
-		conf.GetString("db.name"),
-	)
-	// Instance MySQL database using Gorm
-	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{
-		Logger: logger.Default.LogMode(logger.Info),
-	})
+	dbMysql, err := setGormMysqlDB(conf)
 	if err != nil {
 		log.WithFields(logrus.Fields{
 			"module": "runtime",
@@ -34,25 +23,25 @@ func NewRuntime(conf *viper.Viper, log logrus.FieldLogger) (*Runtime, error) {
 	}
 
 	rt := &Runtime{
-		Db:   db,
-		Conf: conf,
-		Log:  log,
+		DbMysql: dbMysql,
+		Conf:    conf,
+		Log:     log,
 	}
 
 	// Run auto migrate the database, if needed
-	rt.RunMigration()
+	// rt.RunMigration()
 
 	return rt, nil
 }
 
 type Runtime struct {
-	Db   *gorm.DB
-	Conf *viper.Viper
-	Log  logrus.FieldLogger
+	DbMysql *gorm.DB
+	Conf    *viper.Viper
+	Log     logrus.FieldLogger
 }
 
 func (r *Runtime) DB() *gorm.DB {
-	return r.Db
+	return r.DbMysql
 }
 
 func (r *Runtime) Logger() logrus.FieldLogger {
@@ -86,8 +75,23 @@ func (r *Runtime) RunMigration() {
 		*
 		*	Add code here to run database migrations.
 		*
-		r.Db.AutoMigrate(
+		r.DbMysql.AutoMigrate(
 			models.TODO,
 		)
 	*/
+}
+
+func setGormMysqlDB(conf *viper.Viper) (*gorm.DB, error) {
+	dsn := fmt.Sprintf(
+		"%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
+		conf.GetString("db.user"),
+		conf.GetString("db.pass"),
+		conf.GetString("db.host"),
+		conf.GetString("db.port"),
+		conf.GetString("db.name"),
+	)
+	// Instance MySQL database using Gorm
+	return gorm.Open(mysql.Open(dsn), &gorm.Config{
+		Logger: logger.Default.LogMode(logger.Info),
+	})
 }
