@@ -158,13 +158,6 @@ definitions:
       total_page:
         type: integer
         example: 10
-
-  getHealth:
-    type: object
-    properties:
-      status:
-        type: string
-        example: "ok"
         
   # end of models data
 # --End of definitions
