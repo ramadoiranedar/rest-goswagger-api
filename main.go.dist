@@ -51,8 +51,7 @@ func main() {
 
 	h := handlers.NewHandler()
 
-	configureAPI(rt, api)
-	setupRoutes(rt, api, &h)
+	configureAPI(rt, api, &h)
 
 	handler := createHandler(log, api)
 	server.SetHandler(handler)
@@ -117,11 +116,8 @@ func initializeRuntime(log logrus.FieldLogger) *rest_goswagger_api.Runtime {
 	return rt
 }
 
-func configureAPI(rt *rest_goswagger_api.Runtime, api *operations.RestGoswaggerAPIServerAPI) {
+func configureAPI(rt *rest_goswagger_api.Runtime, api *operations.RestGoswaggerAPIServerAPI, h *handlers.Handler) {
 	rest.Authorization(rt, api)
-}
-
-func setupRoutes(rt *rest_goswagger_api.Runtime, api *operations.RestGoswaggerAPIServerAPI, h *handlers.Handler) {
 	routes.Route(rt, api, *h)
 }
 

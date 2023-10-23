@@ -135,21 +135,23 @@ func setupKeyAuth(api *operations.RestGoswaggerAPIServerAPI, rt *rest_goswagger_
 }
 
 func setupRoleAuth(api *operations.RestGoswaggerAPIServerAPI, rt *rest_goswagger_api.Runtime) {
-	api.HasRoleAuth = func(role string) (*models.Principal, error) {
-		if role == "" {
-			return nil, rt.SetError(http.StatusForbidden, "access denied for this role")
-		}
-		return &models.Principal{Role: role}, nil
-	}
+	// TODO: uncomment when some endpoint has implement that security
+	// api.HasRoleAuth = func(role string) (*models.Principal, error) {
+	// 	if role == "" {
+	// 		return nil, rt.SetError(http.StatusForbidden, "access denied for this role")
+	// 	}
+	// 	return &models.Principal{Role: role}, nil
+	// }
 }
 
 func setupPeopleAuth(api *operations.RestGoswaggerAPIServerAPI, rt *rest_goswagger_api.Runtime) {
-	api.IsPeopleAuth = func(people string) (*models.Principal, error) {
-		if people == "" {
-			return nil, rt.SetError(http.StatusForbidden, "access denied for this people")
-		}
-		return &models.Principal{People: people}, nil
-	}
+	// TODO: uncomment when some endpoint has implement that security
+	// api.IsPeopleAuth = func(people string) (*models.Principal, error) {
+	// 	if people == "" {
+	// 		return nil, rt.SetError(http.StatusForbidden, "access denied for this people")
+	// 	}
+	// 	return &models.Principal{People: people}, nil
+	// }
 }
 
 func setupAPIAuthorizer(api *operations.RestGoswaggerAPIServerAPI, rt *rest_goswagger_api.Runtime) {

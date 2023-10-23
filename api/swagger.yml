@@ -44,31 +44,53 @@ paths:
       description: "endpoint for check health server"
       tags:
         - app
-      security:
-        - key: []
-          hasRole:  
-            - admin
-            - people
-          isPeople: []
-      responses: 
+      # Example for implement security
+      # security:
+      #   - key: []
+      #     hasRole:  
+      #       - admin
+      #       - people
+      #     isPeople: []
+      responses:
+        default:
+          description: default response of this endpoint
+          schema:
+            $ref: "#/definitions/basicResponse"
         200:
-          $ref: "#/responses/defaultResponse"
+          description: successfully get response of this endpoint
+          schema:
+            $ref: "#/definitions/basicResponse"
+        
 # --End of paths
 
 # --Start of definitions
 definitions:
-  defaultResponse:
-    description: definition for base response when request to endpoint was successful
+  basicResponse:
+    description: definition for basic response code & message when request to endpoint was successful
     type: object
     properties:
       code:
-        type: number
-        example: 200
+        type: integer
+        format: int32
+        x-omitempty: false
       message:
         type: string
-        example: "successfully get the response"
+        x-omitempty: false
 
-  # models data
+  dataResponse:
+    description: definition for basic response code & message when request to endpoint was successful
+    type: object
+    properties:
+      data:
+        type: object
+        format: interface
+        x-omitempty: true
+
+  basicWithDataResponse:
+    allOf:
+      - $ref: "#/definitions/basicResponse"
+      - $ref: "#/definitions/dataResponse"
+
   principal:
     type: object
     properties:
@@ -84,6 +106,30 @@ definitions:
         type: string
       people:
         type: string
+  
+  pagination:
+    type: "object"
+    properties:
+      current_page:
+        type: integer
+        example: 1
+      per_page:
+        type: integer
+        example: 10
+      total_data:
+        type: integer
+        example: 100
+      total_page:
+        type: integer
+        example: 10
+
+  getHealth:
+    type: object
+    properties:
+      status:
+        type: string
+        example: "ok"
+        
   # end of models data
 # --End of definitions
 
@@ -91,13 +137,6 @@ definitions:
 parameters: {}
 # --End of parameters
 
-# --Start of responses
-responses:
-  defaultResponse:
-    description: response when request to endpoint was successful
-    schema:
-      $ref: "#/definitions/defaultResponse"
-# --End of responses
 
 
 

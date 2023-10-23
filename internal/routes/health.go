@@ -1,8 +1,6 @@
 package routes
 
 import (
-	"net/http"
-
 	"github.com/go-openapi/runtime/middleware"
 	rest_goswagger_api "github.com/ramadoiranedar/rest-goswagger-api"
 	"github.com/ramadoiranedar/rest-goswagger-api/gen/models"
@@ -15,12 +13,17 @@ func setRouteHealth(rt *rest_goswagger_api.Runtime, api *operations.RestGoswagge
 
 	api.AppGetHealthHandler = app.GetHealthHandlerFunc(func(ghp app.GetHealthParams, p *models.Principal) middleware.Responder {
 
-		result := apiHandler.GetHealth(rt)
+		response, err := apiHandler.GetHealth(rt)
 
-		return app.NewGetHealthOK().WithPayload(&models.DefaultResponse{
-			Code:    http.StatusOK,
-			Message: result,
-		})
+		if err != nil {
+			errResponse := rt.GetError(err)
+			return app.NewGetHealthDefault(int(errResponse.Code())).WithPayload(&models.BasicResponse{
+				Code:    errResponse.Code(),
+				Message: errResponse.Error(),
+			})
+		}
+
+		return app.NewGetHealthOK().WithPayload(response)
 
 	})
 
