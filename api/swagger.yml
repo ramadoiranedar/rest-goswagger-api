@@ -53,11 +53,47 @@ paths:
       #     isPeople: []
       responses:
         default:
-          description: default response of this endpoint
+          description: default
           schema:
             $ref: "#/definitions/basicResponse"
         200:
-          description: successfully get response of this endpoint
+          description: ok
+          schema:
+            $ref: "#/definitions/basicResponse"
+        400:
+          description: bad request
+          schema:
+            $ref: "#/definitions/basicResponse"
+        401:
+          description: unauthorized
+          schema:
+            $ref: "#/definitions/basicResponse"
+        403:
+          description: forbidden
+          schema:
+            $ref: "#/definitions/basicResponse"
+        404:
+          description: not found
+          schema:
+            $ref: "#/definitions/basicResponse"
+        405:
+          description: method not allowed
+          schema:
+            $ref: "#/definitions/basicResponse"
+        415:
+          description: unsupported media type
+          schema:
+            $ref: "#/definitions/basicResponse"
+        422:
+          description: unprocessable entity
+          schema:
+            $ref: "#/definitions/basicResponse"
+        500:
+          description: internal server error
+          schema:
+            $ref: "#/definitions/basicResponse"
+        502:
+          description: bad gateway
           schema:
             $ref: "#/definitions/basicResponse"
         
