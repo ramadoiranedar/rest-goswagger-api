@@ -132,31 +132,41 @@ definitions:
     properties:
       sub:
         type: string
+        x-omitempty: true
       email:
         type: string
+        x-omitempty: true
       name:
         type: string
+        x-omitempty: true
       role:
         type: string
+        x-omitempty: true
       provider:
         type: string
+        x-omitempty: true
       people:
         type: string
-  
+        x-omitempty: true
+
   pagination:
     type: "object"
     properties:
       current_page:
         type: integer
+        x-omitempty: true
         example: 1
       per_page:
         type: integer
+        x-omitempty: true
         example: 10
       total_data:
         type: integer
+        x-omitempty: true
         example: 100
       total_page:
         type: integer
+        x-omitempty: true
         example: 10
         
   # end of models data
