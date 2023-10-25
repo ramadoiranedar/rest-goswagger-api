@@ -4,6 +4,7 @@ go 1.21.3
 
 require (
 	github.com/casualjim/middlewares v0.0.0-20180203195520-396189822216
+	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/go-openapi/errors v0.20.4
 	github.com/go-openapi/loads v0.21.2
 	github.com/go-openapi/runtime v0.26.0

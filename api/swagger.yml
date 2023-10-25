@@ -32,6 +32,16 @@ securityDefinitions:
     type: apiKey
     in: header
     name: "x-people-id"
+  # Start of role by jwt payload
+  hasRoleAdmin:
+    type: apiKey
+    in: header
+    name: Authorization
+  hasRoleUser:
+    type: apiKey
+    in: header
+    name: Authorization
+  # End of role by jwt payload
 security:
   - key: []
 
@@ -130,13 +140,10 @@ definitions:
   principal:
     type: object
     properties:
-      sub:
+      user_id:
         type: string
         x-omitempty: true
       email:
-        type: string
-        x-omitempty: true
-      name:
         type: string
         x-omitempty: true
       role:
@@ -148,6 +155,9 @@ definitions:
       people:
         type: string
         x-omitempty: true
+      expired_at:
+        type: integer
+        format: date-time
 
   pagination:
     type: "object"

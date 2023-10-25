@@ -8,10 +8,13 @@ import (
 	rest_goswagger_api "github.com/ramadoiranedar/rest-goswagger-api"
 	"github.com/ramadoiranedar/rest-goswagger-api/gen/models"
 	"github.com/ramadoiranedar/rest-goswagger-api/gen/restapi/operations"
+	"github.com/ramadoiranedar/rest-goswagger-api/internal/utils/jwt"
 
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/go-openapi/runtime/security"
+
+	openapi_errors "github.com/go-openapi/errors"
 )
 
 type AuthorizeApi struct {
@@ -22,6 +25,34 @@ func NewAuthorizationApi(rt *rest_goswagger_api.Runtime) *AuthorizeApi {
 	return &AuthorizeApi{
 		rt: rt,
 	}
+}
+
+func (a *AuthorizeApi) Authorize(r *http.Request, p interface{}) error {
+	authPrincipal := p.(*models.Principal)
+	route := middleware.MatchedRouteFrom(r)
+
+	if scopes, ok := route.Authenticator.Scopes["isPeople"]; ok && len(scopes) > 0 {
+		if route.Params.Get(scopes[0]) != authPrincipal.People {
+			return a.rt.SetError(http.StatusForbidden, "access denied for this PEOPLE resource")
+		}
+	}
+
+	return nil
+}
+
+func hasRequiredRole(principal interface{}, requiredRoles []string) bool {
+	auth, isPrincipal := principal.(*models.Principal)
+	if !isPrincipal {
+		return false
+	}
+
+	for _, role := range requiredRoles {
+		if role == auth.Role {
+			return true
+		}
+	}
+
+	return false
 }
 
 func HttpAuthenticator(name string, handler func(*http.Request) (bool, interface{}, error)) runtime.Authenticator {
@@ -47,47 +78,13 @@ func HttpAuthenticator(name string, handler func(*http.Request) (bool, interface
 	})
 }
 
-func hasRequiredRole(principal interface{}, requiredRoles []string) bool {
-	auth, isPrincipal := principal.(*models.Principal)
-	if !isPrincipal {
-		return false
+func updatePrincipal(existing, incoming *models.Principal) {
+	if incoming.Role != "" {
+		existing.Role = incoming.Role
 	}
 
-	for _, role := range requiredRoles {
-		if role == auth.Role {
-			return true
-		}
-	}
-
-	return false
-}
-
-func (a *AuthorizeApi) Authorize(r *http.Request, p interface{}) error {
-	authPrincipal := p.(*models.Principal)
-	route := middleware.MatchedRouteFrom(r)
-
-	if scopes, ok := route.Authenticator.Scopes["isPeople"]; ok && len(scopes) > 0 {
-		if route.Params.Get(scopes[0]) != authPrincipal.People {
-			return a.rt.SetError(http.StatusForbidden, "access denied for this PEOPLE resource")
-		}
-	}
-
-	return nil
-}
-
-func Authorization(rt *rest_goswagger_api.Runtime, api *operations.RestGoswaggerAPIServerAPI) {
-	setupAPIKeyAuth(api)
-	setupKeyAuth(api, rt)
-	setupRoleAuth(api, rt)
-	setupPeopleAuth(api, rt)
-	setupAPIAuthorizer(api, rt)
-}
-
-func setupAPIKeyAuth(api *operations.RestGoswaggerAPIServerAPI) {
-	api.APIKeyAuthenticator = func(name, in string, ta security.TokenAuthentication) runtime.Authenticator {
-		return HttpAuthenticator(name, func(r *http.Request) (accept bool, principle interface{}, authError error) {
-			return authenticateAPIKey(name, in, ta, r)
-		})
+	if incoming.Provider != "" {
+		existing.Provider = incoming.Provider
 	}
 }
 
@@ -115,13 +112,11 @@ func authenticateAPIKey(name, in string, ta security.TokenAuthentication, r *htt
 	return authFunc.Authenticate(r)
 }
 
-func updatePrincipal(existing, incoming *models.Principal) {
-	if incoming.Role != "" {
-		existing.Role = incoming.Role
-	}
-
-	if incoming.Provider != "" {
-		existing.Provider = incoming.Provider
+func setupAPIKeyAuth(api *operations.RestGoswaggerAPIServerAPI) {
+	api.APIKeyAuthenticator = func(name, in string, ta security.TokenAuthentication) runtime.Authenticator {
+		return HttpAuthenticator(name, func(r *http.Request) (accept bool, principle interface{}, authError error) {
+			return authenticateAPIKey(name, in, ta, r)
+		})
 	}
 }
 
@@ -156,4 +151,68 @@ func setupPeopleAuth(api *operations.RestGoswaggerAPIServerAPI, rt *rest_goswagg
 
 func setupAPIAuthorizer(api *operations.RestGoswaggerAPIServerAPI, rt *rest_goswagger_api.Runtime) {
 	api.APIAuthorizer = NewAuthorizationApi(rt)
+}
+
+func Authorization(rt *rest_goswagger_api.Runtime, api *operations.RestGoswaggerAPIServerAPI) {
+	setupAPIKeyAuth(api)
+	setupKeyAuth(api, rt)
+	setupRoleAuth(api, rt)
+	setupPeopleAuth(api, rt)
+	setupAPIAuthorizer(api, rt)
+}
+
+func setupRoleAuthPayloadJWT(rt *rest_goswagger_api.Runtime, api *operations.RestGoswaggerAPIServerAPI) {
+
+	// TODO: uncomment when some endpoint has implement that security
+	// api.HasRoleAdminAuth = func(token string) (*models.Principal, error) {
+	// 	return checkHasRoleAuthPayloadJWT(rt, constants.ROLE_ADMIN, token)
+	// }
+
+	// TODO: uncomment when some endpoint has implement that security
+	// api.HasRoleUserAuth = func(token string) (*models.Principal, error) {
+	// 	return checkHasRoleAuthPayloadJWT(rt, constants.ROLE_USER, token)
+	// }
+
+}
+
+func parseToken(rt *rest_goswagger_api.Runtime, token string) (*jwt.PayloadJWT, error) {
+	secret := rt.Conf.GetString("JWT_SECRET")
+	maker, err := jwt.NewJWTMaker(secret)
+	if err != nil {
+		return nil, err
+	}
+
+	payload, err := maker.VerifyToken(token)
+	if err != nil {
+		return nil, rt.SetError(401, "Unauthorized: invalid API key token: %v", err)
+	}
+
+	return payload, nil
+}
+
+func verifySingleRole(payload *jwt.PayloadJWT, role string) (*models.Principal, error) {
+	if payload.Role != role {
+		return nil, openapi_errors.New(403, "Forbidden: insufficient API key privileges")
+	}
+
+	return &models.Principal{
+		UserID:    payload.UserID,
+		ExpiredAt: payload.ExpiredAt.Unix(),
+		Email:     payload.Email,
+		Role:      payload.Role,
+	}, nil
+}
+
+func checkHasRoleAuthPayloadJWT(rt *rest_goswagger_api.Runtime, role, token string) (*models.Principal, error) {
+	payload, err := parseToken(rt, token)
+	if err != nil {
+		return nil, err
+	}
+
+	p, err := verifySingleRole(payload, role)
+	if err != nil {
+		return nil, err
+	}
+
+	return p, nil
 }
