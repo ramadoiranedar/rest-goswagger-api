@@ -27,6 +27,7 @@ This package is a simple yet powerful representation of your RESTful API contain
 │   ├── handlers
 │   └── rest
 │   └── routes          // for define all route
+|   └── utils           // for utilites as you need
 ├── main.go.dist        // this is a overwritten (Customized) main file from default generate by the GoSwagger. This file will auto move to main server folder
 ├── makefile            // for CLI Commands to this RESTful API files
 ├── pkg                 // for client generated files by swagger
