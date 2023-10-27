@@ -54,13 +54,79 @@ paths:
       description: "endpoint for check health server"
       tags:
         - app
+      security: []
       # Example for implement security
       # security:
       #   - key: []
-      #     hasRole:  
+      #   - hasRole:
       #       - admin
       #       - people
-      #     isPeople: []
+      #   - isPeople: []
+      responses:
+        default:
+          description: default
+          schema:
+            $ref: "#/definitions/basicResponse"
+        200:
+          description: ok
+          schema:
+            $ref: "#/definitions/basicResponse"
+        400:
+          description: bad request
+          schema:
+            $ref: "#/definitions/basicResponse"
+        401:
+          description: unauthorized
+          schema:
+            $ref: "#/definitions/basicResponse"
+        403:
+          description: forbidden
+          schema:
+            $ref: "#/definitions/basicResponse"
+        404:
+          description: not found
+          schema:
+            $ref: "#/definitions/basicResponse"
+        405:
+          description: method not allowed
+          schema:
+            $ref: "#/definitions/basicResponse"
+        415:
+          description: unsupported media type
+          schema:
+            $ref: "#/definitions/basicResponse"
+        422:
+          description: unprocessable entity
+          schema:
+            $ref: "#/definitions/basicResponse"
+        500:
+          description: internal server error
+          schema:
+            $ref: "#/definitions/basicResponse"
+        502:
+          description: bad gateway
+          schema:
+            $ref: "#/definitions/basicResponse"
+
+  # auth
+  /auth/login:
+    post:
+      summary: "authentication login"
+      description: "endpoint for authentication login and get access token"
+      tags:
+        - auth
+      security: []
+      parameters:
+        - name: email
+          in: formData
+          type: string
+          format: email
+          description: "Example: example@mail.com"
+        - name: password
+          in: formData
+          type: string
+          minLength: 5
+          maxLength: 255
       responses:
         default:
           description: default
@@ -145,15 +211,20 @@ definitions:
         x-omitempty: true
       email:
         type: string
+        format: email
+        maxLength: 255
         x-omitempty: true
       role:
         type: string
+        maxLength: 255
         x-omitempty: true
       provider:
         type: string
+        maxLength: 255
         x-omitempty: true
       people:
         type: string
+        maxLength: 255
         x-omitempty: true
       expired_at:
         type: integer
@@ -178,7 +249,107 @@ definitions:
         type: integer
         x-omitempty: true
         example: 10
-        
+  
+  modelTimeTrace:
+    type: object
+    properties:
+      created_at:
+        type: integer
+        format: date-time
+        x-omitempty: false
+        x-go-custom-tag: gorm:"type:int; autoCreateTime;"
+      updated_at:
+        type: integer
+        format: date-time
+        x-omitempty: false
+        x-go-custom-tag: gorm:"type:int; autoUpdateTime;"
+      deleted_at:
+        type: object
+        x-omitempty: false
+        x-go-type:
+          type: DeletedAt
+          import:
+            package: gorm.io/plugin/soft_delete
+          hints:
+            kind: interface
+
+  modelIdentifier:
+    type: object
+    required:
+      - id
+    properties:
+      id:
+        type: integer
+        format: uint64
+        x-go-custom-tag: gorm:"type:int; auto_increment; primaryKey"
+        x-omitempty: false
+
+  role:
+    allOf:
+      - $ref: "#/definitions/modelTimeTrace"
+      - $ref: "#/definitions/modelIdentifier"
+      - type: object
+        required:
+          - name
+          - slug
+        properties:
+          slug:
+            type: string
+            x-go-custom-tag: gorm:"type:varchar(255); uniqueIndex;"
+            x-omitempty: false
+            maxLength: 255
+          name:
+            type: string
+            x-go-custom-tag: gorm:"type:varchar(255);"
+            x-omitempty: false
+            maxLength: 255
+
+  user:
+    allOf:
+      - $ref: "#/definitions/modelTimeTrace"
+      - $ref: "#/definitions/modelIdentifier"
+      - type: object
+        required:
+          - name
+          - slug
+        properties:
+          email:
+            type: string
+            x-go-custom-tag: gorm:"type:varchar(255); unique; notNull;"
+            x-omitempty: false
+            maxLength: 255
+          fullname:
+            type: string
+            x-go-custom-tag: gorm:"type:varchar(255);"
+            x-omitempty: false
+            maxLength: 255
+          password:
+            type: string
+            x-go-custom-tag: gorm:"type:varchar(255); notNull;"
+            x-omitempty: false
+            maxLength: 255
+
+  userRole:
+    allOf:
+      - $ref: "#/definitions/modelTimeTrace"
+      - $ref: "#/definitions/modelIdentifier"
+      - type: object
+        properties: 
+          role:
+            $ref: "#/definitions/role"
+          role_id:
+            type: number
+            format: uint64
+            x-go-custom-tag: gorm:"foreignKey:fk_userRole_role_role_id"
+            x-omitempty: false
+          user:
+            $ref: "#/definitions/user"
+          user_id:
+            type: number
+            format: uint64
+            x-go-custom-tag: gorm:"foreignKey:fk_user_userRole_user_id"
+            x-omitempty: false
+
   # end of models data
 # --End of definitions
 

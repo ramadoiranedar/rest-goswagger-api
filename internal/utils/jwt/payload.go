@@ -3,24 +3,25 @@ package jwt
 import (
 	"time"
 
+	"github.com/go-openapi/strfmt"
 	"github.com/ramadoiranedar/rest-goswagger-api/internal/utils/constants"
 )
 
 // PayloadJWT represents the data stored in a JWT token
 type PayloadJWT struct {
-	UserID    string    `json:"user_id"`
-	Email     string    `json:"email"`
-	Role      string    `json:"role"`
-	IssuedAt  time.Time `json:"issued_at"`
-	ExpiredAt time.Time `json:"expired_at"`
+	UserID    string       `json:"user_id"`
+	Email     strfmt.Email `json:"email"`
+	Role      string       `json:"role"`
+	IssuedAt  time.Time    `json:"issued_at"`
+	ExpiredAt time.Time    `json:"expired_at"`
 }
 
 // NewPayload creates a new Payload with user information and duration
-func NewPayload(userID string, email, role string, duration time.Duration) *PayloadJWT {
+func NewPayload(income *PayloadJWT, duration time.Duration) *PayloadJWT {
 	return &PayloadJWT{
-		UserID:    userID,
-		Email:     email,
-		Role:      role,
+		UserID:    income.UserID,
+		Email:     income.Email,
+		Role:      income.Role,
 		IssuedAt:  time.Now(),
 		ExpiredAt: time.Now().Add(duration),
 	}

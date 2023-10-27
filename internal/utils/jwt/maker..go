@@ -15,8 +15,8 @@ type JWTMaker struct {
 }
 
 // CreateToken creates a new JWT token with user information and a specified duration
-func (maker *JWTMaker) CreateToken(userID string, email, role string, duration time.Duration) (string, *PayloadJWT, error) {
-	payload := NewPayload(userID, email, role, duration)
+func (maker *JWTMaker) CreateToken(income *PayloadJWT, duration time.Duration) (string, *PayloadJWT, error) {
+	payload := NewPayload(income, duration)
 	jwtToken := jwt.NewWithClaims(jwt.SigningMethodHS256, payload)
 	token, err := jwtToken.SignedString([]byte(maker.secretKey))
 	return token, payload, err
@@ -66,7 +66,7 @@ func RefreshToken(maker Maker, token string, duration time.Duration) (string, *P
 	payload.ExpiredAt = time.Now().Add(duration)
 
 	// Create a new token with the existing payload and the extended duration
-	newToken, newPayload, err := maker.CreateToken(payload.UserID, payload.Email, payload.Role, duration)
+	newToken, newPayload, err := maker.CreateToken(payload, duration)
 	if err != nil {
 		return "", nil, err
 	}
@@ -84,7 +84,7 @@ func RemoveToken(existingToken string, maker Maker) (string, error) {
 	}
 
 	// Create a new token with the existing payload and a very short duration (e.g., 1 second).
-	newToken, _, err := maker.CreateToken(payload.UserID, payload.Email, payload.Role, time.Second)
+	newToken, _, err := maker.CreateToken(payload, time.Second)
 	if err != nil {
 		return "", err
 	}

@@ -9,7 +9,7 @@ import (
 
 // Maker is an interface for creating and verifying JWT tokens
 type Maker interface {
-	CreateToken(userID string, email, role string, duration time.Duration) (string, *PayloadJWT, error)
+	CreateToken(income *PayloadJWT, duration time.Duration) (string, *PayloadJWT, error)
 	VerifyToken(token string) (*PayloadJWT, error)
 }
 

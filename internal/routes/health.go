@@ -11,10 +11,8 @@ import (
 
 func setRouteHealth(rt *rest_goswagger_api.Runtime, api *operations.RestGoswaggerAPIServerAPI, apiHandler handlers.Handler) {
 
-	api.AppGetHealthHandler = app.GetHealthHandlerFunc(func(ghp app.GetHealthParams, p *models.Principal) middleware.Responder {
-
+	api.AppGetHealthHandler = app.GetHealthHandlerFunc(func(ghp app.GetHealthParams) middleware.Responder {
 		response, err := apiHandler.GetHealth(rt)
-
 		if err != nil {
 			errResponse := rt.GetError(err)
 			return app.NewGetHealthDefault(int(errResponse.Code())).WithPayload(&models.BasicResponse{
@@ -24,7 +22,6 @@ func setRouteHealth(rt *rest_goswagger_api.Runtime, api *operations.RestGoswagge
 		}
 
 		return app.NewGetHealthOK().WithPayload(response)
-
 	})
 
 	// more route here
