@@ -11,6 +11,7 @@ produces:
   - application/json
 consumes:
   - application/json
+  - multipart/form-data
 schemes:
   - http
 host: "localhost:8080" #base url
@@ -131,7 +132,7 @@ paths:
         default:
           description: default
           schema:
-            $ref: "#/definitions/basicResponse"
+            $ref: "#/definitions/basicWithDataResponse"
         200:
           description: ok
           schema:
