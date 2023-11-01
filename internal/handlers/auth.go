@@ -30,7 +30,7 @@ func (h *handler) PostAuthLogin(rt *rest_goswagger_api.Runtime, params *auth.Pos
 		return
 	}
 
-	passwordHash := utils_hash.HashSha256(*params.Password)
+	passwordHash := utils_hash.HashSha256(params.Password)
 	if *user.Password != passwordHash {
 		err = rt.SetError(http.StatusUnprocessableEntity, constants.MSG_INCORRECT_EMAIL_OR_PASSWORD)
 		return

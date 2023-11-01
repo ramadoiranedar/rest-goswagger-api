@@ -8,6 +8,7 @@ import (
 	rest_goswagger_api "github.com/ramadoiranedar/rest-goswagger-api"
 	"github.com/ramadoiranedar/rest-goswagger-api/gen/models"
 	"github.com/ramadoiranedar/rest-goswagger-api/gen/restapi/operations"
+	"github.com/ramadoiranedar/rest-goswagger-api/internal/utils/constants"
 	"github.com/ramadoiranedar/rest-goswagger-api/internal/utils/jwt"
 
 	"github.com/go-openapi/runtime"
@@ -139,6 +140,19 @@ func setupRoleAuth(api *operations.RestGoswaggerAPIServerAPI, rt *rest_goswagger
 	// }
 }
 
+func setupRoleAuthPayloadJWT(api *operations.RestGoswaggerAPIServerAPI, rt *rest_goswagger_api.Runtime) {
+	// TODO: uncomment when some endpoint has implement that security
+	api.HasRoleAdminAuth = func(token string) (*models.Principal, error) {
+		return checkHasRoleAuthPayloadJWT(rt, constants.SLUG_ROLE_ADMIN, token)
+	}
+
+	// TODO: uncomment when some endpoint has implement that security
+	// api.HasRoleUserAuth = func(token string) (*models.Principal, error) {
+	// 	return checkHasRoleAuthPayloadJWT(rt, constants.SLUG_ROLE_USER, token)
+	// }
+
+}
+
 func setupPeopleAuth(api *operations.RestGoswaggerAPIServerAPI, rt *rest_goswagger_api.Runtime) {
 	// TODO: uncomment when some endpoint has implement that security
 	// api.IsPeopleAuth = func(people string) (*models.Principal, error) {
@@ -157,26 +171,13 @@ func Authorization(rt *rest_goswagger_api.Runtime, api *operations.RestGoswagger
 	setupAPIKeyAuth(api)
 	setupKeyAuth(api, rt)
 	setupRoleAuth(api, rt)
+	setupRoleAuthPayloadJWT(api, rt)
 	setupPeopleAuth(api, rt)
 	setupAPIAuthorizer(api, rt)
 }
 
-func setupRoleAuthPayloadJWT(rt *rest_goswagger_api.Runtime, api *operations.RestGoswaggerAPIServerAPI) {
-
-	// TODO: uncomment when some endpoint has implement that security
-	// api.HasRoleAdminAuth = func(token string) (*models.Principal, error) {
-	// 	return checkHasRoleAuthPayloadJWT(rt, constants.ROLE_ADMIN, token)
-	// }
-
-	// TODO: uncomment when some endpoint has implement that security
-	// api.HasRoleUserAuth = func(token string) (*models.Principal, error) {
-	// 	return checkHasRoleAuthPayloadJWT(rt, constants.ROLE_USER, token)
-	// }
-
-}
-
 func parseToken(rt *rest_goswagger_api.Runtime, token string) (*jwt.PayloadJWT, error) {
-	secret := rt.Conf.GetString("JWT_SECRET")
+	secret := rt.Conf.GetString("jwt.secret")
 	maker, err := jwt.NewJWTMaker(secret)
 	if err != nil {
 		return nil, err
@@ -184,7 +185,7 @@ func parseToken(rt *rest_goswagger_api.Runtime, token string) (*jwt.PayloadJWT, 
 
 	payload, err := maker.VerifyToken(token)
 	if err != nil {
-		return nil, rt.SetError(401, "Unauthorized: invalid API key token: %v", err)
+		return nil, rt.SetError(http.StatusUnauthorized, "invalid API key token: %v", err)
 	}
 
 	return payload, nil
@@ -192,7 +193,7 @@ func parseToken(rt *rest_goswagger_api.Runtime, token string) (*jwt.PayloadJWT, 
 
 func verifySingleRole(payload *jwt.PayloadJWT, role string) (*models.Principal, error) {
 	if payload.RoleSlug != role {
-		return nil, openapi_errors.New(403, "Forbidden: insufficient API key privileges")
+		return nil, openapi_errors.New(http.StatusForbidden, "insufficient API key privileges")
 	}
 
 	return &models.Principal{

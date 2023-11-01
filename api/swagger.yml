@@ -20,7 +20,6 @@ securityDefinitions:
     type: "apiKey"
     in: "header"
     name: "x-app-key"
-    description: "test"
   hasRole:
     type: apiKey
     in: header
@@ -112,6 +111,7 @@ paths:
           description: bad gateway
           schema:
             $ref: "#/definitions/basicResponse"
+  # End of health
 
   # auth
   /auth/login:
@@ -127,12 +127,14 @@ paths:
           type: string
           format: email
           maxLength: 255
+          required: true
           description: "Example: example@mail.com"
         - name: password
           in: formData
           type: string
           minLength: 5
           maxLength: 255
+          required: true
       responses:
         default:
           description: default
@@ -145,7 +147,7 @@ paths:
         201:
           description: created
           schema:
-            $ref: "#/definitions/postAuthRegistrationResponse"
+            $ref: "#/definitions/basicResponse"
         400:
           description: bad request
           schema:
@@ -182,7 +184,6 @@ paths:
           description: bad gateway
           schema:
             $ref: "#/definitions/basicResponse"
-  
   /auth/registration:
     post:
       summary: "authentication registration"
@@ -217,7 +218,7 @@ paths:
         200:
           description: ok
           schema:
-            $ref: "#/definitions/postAuthRegistrationResponse"
+            $ref: "#/definitions/basicResponse"
         201:
           description: created
           schema:
@@ -258,6 +259,81 @@ paths:
           description: bad gateway
           schema:
             $ref: "#/definitions/basicResponse"
+  # End of auth
+
+  # role
+  /role:
+    post:
+      summary: "create new role"
+      description: "endpoint for create a new role"
+      tags:
+        - role
+      security:
+        - key: []
+          hasRoleAdmin: []
+      parameters:
+        - name: name
+          in: formData
+          type: string
+          maxLength: 255
+          required: true
+        - name: slug
+          in: formData
+          type: string
+          minLength: 5
+          maxLength: 255
+          required: true
+      responses:
+        default:
+          description: default
+          schema:
+            $ref: "#/definitions/basicResponse"
+        200:
+          description: ok
+          schema:
+            $ref: "#/definitions/basicResponse"
+        201:
+          description: created
+          schema:
+            $ref: "#/definitions/basicResponse"
+        400:
+          description: bad request
+          schema:
+            $ref: "#/definitions/basicResponse"
+        401:
+          description: unauthorized
+          schema:
+            $ref: "#/definitions/basicResponse"
+        403:
+          description: forbidden
+          schema:
+            $ref: "#/definitions/basicResponse"
+        404:
+          description: not found
+          schema:
+            $ref: "#/definitions/basicResponse"
+        405:
+          description: method not allowed
+          schema:
+            $ref: "#/definitions/basicResponse"
+        415:
+          description: unsupported media type
+          schema:
+            $ref: "#/definitions/basicResponse"
+        422:
+          description: unprocessable entity
+          schema:
+            $ref: "#/definitions/basicResponse"
+        500:
+          description: internal server error
+          schema:
+            $ref: "#/definitions/basicResponse"
+        502:
+          description: bad gateway
+          schema:
+            $ref: "#/definitions/basicResponse"
+  # End of role
+
 
 # --End of paths
 
@@ -267,11 +343,9 @@ definitions:
     type: integer
     format: int32
     x-omitempty: true
-
   message:
     type: string
     x-omitempty: true
-
   basicResponse:
     description: definition for basic response code & message when request to endpoint was successful
     type: object
@@ -280,7 +354,6 @@ definitions:
         $ref: "#/definitions/code"
       message:
         $ref: "#/definitions/message"
-
   dataResponse:
     description: definition for basic response code & message when request to endpoint was successful
     type: object
@@ -289,7 +362,6 @@ definitions:
         type: object
         format: interface
         x-omitempty: true
-
   postAuthLoginResponse:
     type: object
     properties:
@@ -299,7 +371,6 @@ definitions:
         $ref: "#/definitions/message"
       data:
         $ref: "#/definitions/postAuthLoginDataResponse"
-  
   postAuthLoginDataResponse:
     type: object
     properties: 
@@ -309,7 +380,6 @@ definitions:
         x-omitempty: false
       payload_jwt:
         $ref: "#/definitions/payload_jwt"
-
   postAuthRegistrationResponse:
     type: object
     properties:
@@ -317,7 +387,6 @@ definitions:
         $ref: "#/definitions/code"
       message:
         $ref: "#/definitions/message"
-
   principal:
     type: object
     properties:
@@ -345,7 +414,6 @@ definitions:
       expired_at:
         type: integer
         format: date-time
-  
   payload_jwt:
     type: object
     properties:
@@ -367,7 +435,6 @@ definitions:
       expired_at:
         type: string
         format: date-time
-
   pagination:
     type: "object"
     properties:
@@ -388,6 +455,7 @@ definitions:
         x-omitempty: true
         example: 10
   
+  # model data
   modelTimeTrace:
     type: object
     properties:
@@ -410,7 +478,6 @@ definitions:
             package: gorm.io/plugin/soft_delete
           hints:
             kind: interface
-
   modelIdentifier:
     type: object
     required:
@@ -421,13 +488,11 @@ definitions:
         format: uint64
         x-go-custom-tag: gorm:"type:int; auto_increment; primaryKey"
         x-omitempty: false
-
   role:
     allOf:
       - $ref: "#/definitions/modelTimeTrace"
       - $ref: "#/definitions/modelIdentifier"
       - $ref: "#/definitions/dataRole"
-
   dataRole:
     type: object
     properties: 
@@ -441,13 +506,11 @@ definitions:
         x-go-custom-tag: gorm:"type:varchar(255);"
         x-omitempty: false
         maxLength: 255
-
   user:
     allOf:
       - $ref: "#/definitions/modelTimeTrace"
       - $ref: "#/definitions/modelIdentifier"
       - $ref: "#/definitions/dataUser"
-
   dataUser:
     type: object
     required:
@@ -478,7 +541,7 @@ definitions:
         x-go-custom-tag: gorm:"type:varchar(255); notNull;"
         x-omitempty: false
         maxLength: 255
-
+  # End of model data
 # --End of definitions
 
 # --Start of parameters
