@@ -28,6 +28,10 @@ type AuthHandler interface {
 
 type RoleHandler interface {
 	PostRole(rt *rest_goswagger_api.Runtime, params *role.PostRoleParams) (response *models.BasicResponse, err error)
+	PutRoleID(rt *rest_goswagger_api.Runtime, params *role.PutRoleIDParams) (response *models.BasicResponse, err error)
+	DeleteRoleID(rt *rest_goswagger_api.Runtime, params *role.DeleteRoleIDParams) (response *models.BasicResponse, err error)
+	GetRoleID(rt *rest_goswagger_api.Runtime, params *role.GetRoleIDParams) (response *models.GetRoleIDResponse, err error)
+	GetRole(rt *rest_goswagger_api.Runtime, params *role.GetRoleParams) (response *models.GetRoleResponse, err error)
 }
 
 func NewHandler() Handler {

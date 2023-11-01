@@ -11,6 +11,7 @@ import (
 
 func setRouteHealth(rt *rest_goswagger_api.Runtime, api *operations.RestGoswaggerAPIServerAPI, apiHandler handlers.Handler) {
 
+	// GET /health
 	api.AppGetHealthHandler = app.GetHealthHandlerFunc(func(ghp app.GetHealthParams) middleware.Responder {
 		response, err := apiHandler.GetHealth(rt)
 		if err != nil {

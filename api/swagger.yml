@@ -32,7 +32,7 @@ securityDefinitions:
     type: apiKey
     in: header
     name: "x-people-id"
-  # Start of role by jwt payload
+  # role by jwt payload
   hasRoleAdmin:
     type: apiKey
     in: header
@@ -45,7 +45,7 @@ securityDefinitions:
 security:
   - key: []
 
-# --Start of paths
+# paths
 paths:
   # health
   /health:
@@ -120,7 +120,8 @@ paths:
       description: "endpoint for authentication login and get access token"
       tags:
         - auth
-      security: []
+      security:
+        - key: []
       parameters:
         - name: email
           in: formData
@@ -190,26 +191,12 @@ paths:
       description: "endpoint for authentication registration"
       tags:
         - auth
-      security: []
+      security:
+        - key: []
       parameters:
-        - name: fullname
-          in: formData
-          type: string
-          maxLength: 255
-          required: true
-        - name: email
-          in: formData
-          type: string
-          format: email
-          description: "Example: example@mail.com"
-          maxLength: 255
-          required: true
-        - name: password
-          in: formData
-          type: string
-          minLength: 5
-          maxLength: 255
-          required: true
+        - $ref: "#/parameters/paramFormDataFullname"
+        - $ref: "#/parameters/paramFormDataEmail"
+        - $ref: "#/parameters/paramFormDataPassword"
       responses:
         default:
           description: default
@@ -272,17 +259,8 @@ paths:
         - key: []
           hasRoleAdmin: []
       parameters:
-        - name: name
-          in: formData
-          type: string
-          maxLength: 255
-          required: true
-        - name: slug
-          in: formData
-          type: string
-          minLength: 5
-          maxLength: 255
-          required: true
+        - $ref: "#/parameters/paramFormDataName"
+        - $ref: "#/parameters/paramFormDataSlug"
       responses:
         default:
           description: default
@@ -332,13 +310,282 @@ paths:
           description: bad gateway
           schema:
             $ref: "#/definitions/basicResponse"
+    get:
+      summary: "get some role data"
+      description: "endpoint for get some role data"
+      tags:
+        - role
+      security:
+        - key: []
+          hasRoleAdmin: []
+      parameters:
+        - $ref: "#/parameters/paramQuerySort"
+        - $ref: "#/parameters/paramQuerySortBy"
+      responses:
+        default:
+          description: default
+          schema:
+            $ref: "#/definitions/basicResponse"
+        200:
+          description: ok
+          schema:
+            $ref: "#/definitions/getRoleResponse"
+        201:
+          description: created
+          schema:
+            $ref: "#/definitions/basicResponse"
+        400:
+          description: bad request
+          schema:
+            $ref: "#/definitions/basicResponse"
+        401:
+          description: unauthorized
+          schema:
+            $ref: "#/definitions/basicResponse"
+        403:
+          description: forbidden
+          schema:
+            $ref: "#/definitions/basicResponse"
+        404:
+          description: not found
+          schema:
+            $ref: "#/definitions/basicResponse"
+        405:
+          description: method not allowed
+          schema:
+            $ref: "#/definitions/basicResponse"
+        415:
+          description: unsupported media type
+          schema:
+            $ref: "#/definitions/basicResponse"
+        422:
+          description: unprocessable entity
+          schema:
+            $ref: "#/definitions/basicResponse"
+        500:
+          description: internal server error
+          schema:
+            $ref: "#/definitions/basicResponse"
+        502:
+          description: bad gateway
+          schema:
+            $ref: "#/definitions/basicResponse"
+
+  /role/{id}:
+    put:
+      summary: "update existing role"
+      description: "endpoint for update an existing role"
+      tags:
+        - role
+      security:
+        - key: []
+          hasRoleAdmin: []
+      parameters:
+        - $ref: "#/parameters/paramPathIdUint"
+        - $ref: "#/parameters/paramFormDataName"
+        - $ref: "#/parameters/paramFormDataSlug"
+      responses:
+        default:
+          description: default
+          schema:
+            $ref: "#/definitions/basicResponse"
+        200:
+          description: ok
+          schema:
+            $ref: "#/definitions/basicResponse"
+        201:
+          description: created
+          schema:
+            $ref: "#/definitions/basicResponse"
+        400:
+          description: bad request
+          schema:
+            $ref: "#/definitions/basicResponse"
+        401:
+          description: unauthorized
+          schema:
+            $ref: "#/definitions/basicResponse"
+        403:
+          description: forbidden
+          schema:
+            $ref: "#/definitions/basicResponse"
+        404:
+          description: not found
+          schema:
+            $ref: "#/definitions/basicResponse"
+        405:
+          description: method not allowed
+          schema:
+            $ref: "#/definitions/basicResponse"
+        415:
+          description: unsupported media type
+          schema:
+            $ref: "#/definitions/basicResponse"
+        422:
+          description: unprocessable entity
+          schema:
+            $ref: "#/definitions/basicResponse"
+        500:
+          description: internal server error
+          schema:
+            $ref: "#/definitions/basicResponse"
+        502:
+          description: bad gateway
+          schema:
+            $ref: "#/definitions/basicResponse"
+    delete:
+      summary: "delete existing role"
+      description: "endpoint for delete an existing role"
+      tags:
+        - role
+      security:
+        - key: []
+          hasRoleAdmin: []
+      parameters:
+        - $ref: "#/parameters/paramPathIdUint"
+      responses:
+        default:
+          description: default
+          schema:
+            $ref: "#/definitions/basicResponse"
+        200:
+          description: ok
+          schema:
+            $ref: "#/definitions/basicResponse"
+        201:
+          description: created
+          schema:
+            $ref: "#/definitions/basicResponse"
+        400:
+          description: bad request
+          schema:
+            $ref: "#/definitions/basicResponse"
+        401:
+          description: unauthorized
+          schema:
+            $ref: "#/definitions/basicResponse"
+        403:
+          description: forbidden
+          schema:
+            $ref: "#/definitions/basicResponse"
+        404:
+          description: not found
+          schema:
+            $ref: "#/definitions/basicResponse"
+        405:
+          description: method not allowed
+          schema:
+            $ref: "#/definitions/basicResponse"
+        415:
+          description: unsupported media type
+          schema:
+            $ref: "#/definitions/basicResponse"
+        422:
+          description: unprocessable entity
+          schema:
+            $ref: "#/definitions/basicResponse"
+        500:
+          description: internal server error
+          schema:
+            $ref: "#/definitions/basicResponse"
+        502:
+          description: bad gateway
+          schema:
+            $ref: "#/definitions/basicResponse"
+    get:
+      summary: "get existing role specified by id"
+      description: "endpoint for get an existing role specified by id"
+      tags:
+        - role
+      security:
+        - key: []
+          hasRoleAdmin: []
+      parameters:
+        - $ref: "#/parameters/paramPathIdUint"
+      responses:
+        default:
+          description: default
+          schema:
+            $ref: "#/definitions/basicResponse"
+        200:
+          description: ok
+          schema:
+            $ref: "#/definitions/getRoleIdResponse"
+        201:
+          description: created
+          schema:
+            $ref: "#/definitions/basicResponse"
+        400:
+          description: bad request
+          schema:
+            $ref: "#/definitions/basicResponse"
+        401:
+          description: unauthorized
+          schema:
+            $ref: "#/definitions/basicResponse"
+        403:
+          description: forbidden
+          schema:
+            $ref: "#/definitions/basicResponse"
+        404:
+          description: not found
+          schema:
+            $ref: "#/definitions/basicResponse"
+        405:
+          description: method not allowed
+          schema:
+            $ref: "#/definitions/basicResponse"
+        415:
+          description: unsupported media type
+          schema:
+            $ref: "#/definitions/basicResponse"
+        422:
+          description: unprocessable entity
+          schema:
+            $ref: "#/definitions/basicResponse"
+        500:
+          description: internal server error
+          schema:
+            $ref: "#/definitions/basicResponse"
+        502:
+          description: bad gateway
+          schema:
+            $ref: "#/definitions/basicResponse"
+
   # End of role
 
 
 # --End of paths
 
-# --Start of definitions
+# --definitions
 definitions:
+  principal:
+    type: object
+    properties:
+      user_id:
+        type: integer
+        format: uint64
+        x-omitempty: true
+      email:
+        type: string
+        format: email
+        maxLength: 255
+        x-omitempty: true
+      role:
+        type: string
+        maxLength: 255
+        x-omitempty: true
+      provider:
+        type: string
+        maxLength: 255
+        x-omitempty: true
+      people:
+        type: string
+        maxLength: 255
+        x-omitempty: true
+      expired_at:
+        type: integer
+        format: date-time
   code:
     type: integer
     format: int32
@@ -387,33 +634,28 @@ definitions:
         $ref: "#/definitions/code"
       message:
         $ref: "#/definitions/message"
-  principal:
+  getRoleIdResponse:
     type: object
     properties:
-      user_id:
-        type: integer
-        format: uint64
-        x-omitempty: true
-      email:
-        type: string
-        format: email
-        maxLength: 255
-        x-omitempty: true
-      role:
-        type: string
-        maxLength: 255
-        x-omitempty: true
-      provider:
-        type: string
-        maxLength: 255
-        x-omitempty: true
-      people:
-        type: string
-        maxLength: 255
-        x-omitempty: true
-      expired_at:
-        type: integer
-        format: date-time
+      code: 
+        $ref: "#/definitions/code"
+      message:
+        $ref: "#/definitions/message"
+      data:
+        $ref: "#/definitions/role"
+  getRoleResponse:
+    type: object
+    properties:
+      code: 
+        $ref: "#/definitions/code"
+      message:
+        $ref: "#/definitions/message"
+      data:
+        type: array
+        items:
+          $ref: "#/definitions/role"
+
+  # model utility
   payload_jwt:
     type: object
     properties:
@@ -454,7 +696,8 @@ definitions:
         type: integer
         x-omitempty: true
         example: 10
-  
+  # End of model utility
+
   # model data
   modelTimeTrace:
     type: object
@@ -541,11 +784,100 @@ definitions:
         x-go-custom-tag: gorm:"type:varchar(255); notNull;"
         x-omitempty: false
         maxLength: 255
+  dataUserExludePassword:
+    type: object
+    required:
+      - email
+      - fullname
+    properties:
+      role:
+        $ref: '#/definitions/role'
+        x-go-custom-tag: gorm:"foreignKey:role_id;"
+      role_id:
+        type: number
+        format: uint64
+        x-go-custom-tag: gorm:"foreignKey:fk_userRole_role_role_id;"
+        x-omitempty: false
+      email:
+        type: string
+        x-go-custom-tag: gorm:"type:varchar(255); unique; notNull;"
+        x-omitempty: false
+        maxLength: 255
+      fullname:
+        type: string
+        x-go-custom-tag: gorm:"type:varchar(255);"
+        x-omitempty: false
+        maxLength: 255
   # End of model data
 # --End of definitions
 
-# --Start of parameters
-parameters: {}
+# --parameters
+parameters:
+  # global
+  paramPathIdUint:
+    name: id
+    in: path
+    type: integer
+    format: uint64
+    required: true
+  paramFormDataName:
+    name: name
+    in: formData
+    type: string
+    minLength: 5
+    maxLength: 255
+    required: true
+  paramQuerySort:
+    name: sort
+    in: query
+    type: string
+    enum:
+      - asc
+      - desc
+    default: asc
+  paramQuerySortBy:
+    name: sort_by
+    in: query
+    type: string
+    maxLength: 255
+    default: id
+    required: false
+  # End of global
+
+  # role
+  paramFormDataSlug:
+    name: slug
+    in: formData
+    type: string
+    minLength: 5
+    maxLength: 255
+    required: true
+  # End of role
+
+  # user
+  paramFormDataFullname:
+    name: fullname
+    in: formData
+    type: string
+    maxLength: 255
+    required: true
+  paramFormDataEmail:
+    name: email
+    in: formData
+    type: string
+    format: email
+    description: "Example: example@mail.com"
+    maxLength: 255
+    required: true
+  paramFormDataPassword:
+    name: password
+    in: formData
+    type: string
+    minLength: 5
+    maxLength: 255
+    required: true
+  # End of user
+
 # --End of parameters
 
 

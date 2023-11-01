@@ -70,7 +70,7 @@ func (h *handler) PostAuthLogin(rt *rest_goswagger_api.Runtime, params *auth.Pos
 
 	response = &models.PostAuthLoginResponse{
 		Code:    http.StatusOK,
-		Message: "ok",
+		Message: constants.MSG_OK,
 		Data:    data,
 	}
 
@@ -100,10 +100,9 @@ func (h *handler) PostAuthRegistration(rt *rest_goswagger_api.Runtime, params *a
 		return
 	}
 
-	msg := fmt.Sprintf(constants.MSG_SUCCESS_REGISTRATION, models.Message(*user.Email))
 	response = &models.PostAuthRegistrationResponse{
 		Code:    http.StatusCreated,
-		Message: models.Message(msg),
+		Message: constants.MSG_OK,
 	}
 
 	return

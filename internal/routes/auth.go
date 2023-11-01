@@ -11,7 +11,7 @@ import (
 
 func setRouteAuth(rt *rest_goswagger_api.Runtime, api *operations.RestGoswaggerAPIServerAPI, apiHandler handlers.Handler) {
 
-	api.AuthPostAuthLoginHandler = auth.PostAuthLoginHandlerFunc(func(params auth.PostAuthLoginParams) middleware.Responder {
+	api.AuthPostAuthLoginHandler = auth.PostAuthLoginHandlerFunc(func(params auth.PostAuthLoginParams, p *models.Principal) middleware.Responder {
 		response, err := apiHandler.PostAuthLogin(rt, &params)
 		if err != nil {
 			errResponse := rt.GetError(err)
@@ -24,7 +24,7 @@ func setRouteAuth(rt *rest_goswagger_api.Runtime, api *operations.RestGoswaggerA
 		return auth.NewPostAuthLoginOK().WithPayload(response)
 	})
 
-	api.AuthPostAuthRegistrationHandler = auth.PostAuthRegistrationHandlerFunc(func(params auth.PostAuthRegistrationParams) middleware.Responder {
+	api.AuthPostAuthRegistrationHandler = auth.PostAuthRegistrationHandlerFunc(func(params auth.PostAuthRegistrationParams, p *models.Principal) middleware.Responder {
 		response, err := apiHandler.PostAuthRegistration(rt, &params)
 		if err != nil {
 			errResponse := rt.GetError(err)
