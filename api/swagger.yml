@@ -72,6 +72,10 @@ paths:
           description: ok
           schema:
             $ref: "#/definitions/basicResponse"
+        201:
+          description: created
+          schema:
+            $ref: "#/definitions/basicResponse"
         400:
           description: bad request
           schema:
@@ -122,6 +126,7 @@ paths:
           in: formData
           type: string
           format: email
+          maxLength: 255
           description: "Example: example@mail.com"
         - name: password
           in: formData
@@ -132,11 +137,15 @@ paths:
         default:
           description: default
           schema:
-            $ref: "#/definitions/basicWithDataResponse"
+            $ref: "#/definitions/basicResponse"
         200:
           description: ok
           schema:
-            $ref: "#/definitions/basicResponse"
+            $ref: "#/definitions/postAuthLoginResponse"
+        201:
+          description: created
+          schema:
+            $ref: "#/definitions/postAuthRegistrationResponse"
         400:
           description: bad request
           schema:
@@ -173,22 +182,104 @@ paths:
           description: bad gateway
           schema:
             $ref: "#/definitions/basicResponse"
-        
+  
+  /auth/registration:
+    post:
+      summary: "authentication registration"
+      description: "endpoint for authentication registration"
+      tags:
+        - auth
+      security: []
+      parameters:
+        - name: fullname
+          in: formData
+          type: string
+          maxLength: 255
+          required: true
+        - name: email
+          in: formData
+          type: string
+          format: email
+          description: "Example: example@mail.com"
+          maxLength: 255
+          required: true
+        - name: password
+          in: formData
+          type: string
+          minLength: 5
+          maxLength: 255
+          required: true
+      responses:
+        default:
+          description: default
+          schema:
+            $ref: "#/definitions/basicResponse"
+        200:
+          description: ok
+          schema:
+            $ref: "#/definitions/postAuthRegistrationResponse"
+        201:
+          description: created
+          schema:
+            $ref: "#/definitions/postAuthRegistrationResponse"
+        400:
+          description: bad request
+          schema:
+            $ref: "#/definitions/basicResponse"
+        401:
+          description: unauthorized
+          schema:
+            $ref: "#/definitions/basicResponse"
+        403:
+          description: forbidden
+          schema:
+            $ref: "#/definitions/basicResponse"
+        404:
+          description: not found
+          schema:
+            $ref: "#/definitions/basicResponse"
+        405:
+          description: method not allowed
+          schema:
+            $ref: "#/definitions/basicResponse"
+        415:
+          description: unsupported media type
+          schema:
+            $ref: "#/definitions/basicResponse"
+        422:
+          description: unprocessable entity
+          schema:
+            $ref: "#/definitions/basicResponse"
+        500:
+          description: internal server error
+          schema:
+            $ref: "#/definitions/basicResponse"
+        502:
+          description: bad gateway
+          schema:
+            $ref: "#/definitions/basicResponse"
+
 # --End of paths
 
 # --Start of definitions
 definitions:
+  code:
+    type: integer
+    format: int32
+    x-omitempty: true
+
+  message:
+    type: string
+    x-omitempty: true
+
   basicResponse:
     description: definition for basic response code & message when request to endpoint was successful
     type: object
     properties:
       code:
-        type: integer
-        format: int32
-        x-omitempty: false
+        $ref: "#/definitions/code"
       message:
-        type: string
-        x-omitempty: false
+        $ref: "#/definitions/message"
 
   dataResponse:
     description: definition for basic response code & message when request to endpoint was successful
@@ -199,16 +290,40 @@ definitions:
         format: interface
         x-omitempty: true
 
-  basicWithDataResponse:
-    allOf:
-      - $ref: "#/definitions/basicResponse"
-      - $ref: "#/definitions/dataResponse"
+  postAuthLoginResponse:
+    type: object
+    properties:
+      code: 
+        $ref: "#/definitions/code"
+      message:
+        $ref: "#/definitions/message"
+      data:
+        $ref: "#/definitions/postAuthLoginDataResponse"
+  
+  postAuthLoginDataResponse:
+    type: object
+    properties: 
+      token:
+        type: string
+        format: interface
+        x-omitempty: false
+      payload_jwt:
+        $ref: "#/definitions/payload_jwt"
+
+  postAuthRegistrationResponse:
+    type: object
+    properties:
+      code: 
+        $ref: "#/definitions/code"
+      message:
+        $ref: "#/definitions/message"
 
   principal:
     type: object
     properties:
       user_id:
-        type: string
+        type: integer
+        format: uint64
         x-omitempty: true
       email:
         type: string
@@ -229,6 +344,28 @@ definitions:
         x-omitempty: true
       expired_at:
         type: integer
+        format: date-time
+  
+  payload_jwt:
+    type: object
+    properties:
+      user_id:
+        type: integer
+        format: uint64
+        x-omitempty: false
+      email:
+        type: string
+        format: email
+        x-omitempty: false
+      role_slug:
+        type: string
+        x-omitempty: false
+      issued_at:
+        type: string
+        format: date-time
+        x-omitempty: false
+      expired_at:
+        type: string
         format: date-time
 
   pagination:
@@ -289,69 +426,59 @@ definitions:
     allOf:
       - $ref: "#/definitions/modelTimeTrace"
       - $ref: "#/definitions/modelIdentifier"
-      - type: object
-        required:
-          - name
-          - slug
-        properties:
-          slug:
-            type: string
-            x-go-custom-tag: gorm:"type:varchar(255); uniqueIndex;"
-            x-omitempty: false
-            maxLength: 255
-          name:
-            type: string
-            x-go-custom-tag: gorm:"type:varchar(255);"
-            x-omitempty: false
-            maxLength: 255
+      - $ref: "#/definitions/dataRole"
+
+  dataRole:
+    type: object
+    properties: 
+      slug:
+        type: string
+        x-go-custom-tag: gorm:"type:varchar(255); uniqueIndex;"
+        x-omitempty: false
+        maxLength: 255
+      name:
+        type: string
+        x-go-custom-tag: gorm:"type:varchar(255);"
+        x-omitempty: false
+        maxLength: 255
 
   user:
     allOf:
       - $ref: "#/definitions/modelTimeTrace"
       - $ref: "#/definitions/modelIdentifier"
-      - type: object
-        required:
-          - name
-          - slug
-        properties:
-          email:
-            type: string
-            x-go-custom-tag: gorm:"type:varchar(255); unique; notNull;"
-            x-omitempty: false
-            maxLength: 255
-          fullname:
-            type: string
-            x-go-custom-tag: gorm:"type:varchar(255);"
-            x-omitempty: false
-            maxLength: 255
-          password:
-            type: string
-            x-go-custom-tag: gorm:"type:varchar(255); notNull;"
-            x-omitempty: false
-            maxLength: 255
+      - $ref: "#/definitions/dataUser"
 
-  userRole:
-    allOf:
-      - $ref: "#/definitions/modelTimeTrace"
-      - $ref: "#/definitions/modelIdentifier"
-      - type: object
-        properties: 
-          role:
-            $ref: "#/definitions/role"
-          role_id:
-            type: number
-            format: uint64
-            x-go-custom-tag: gorm:"foreignKey:fk_userRole_role_role_id"
-            x-omitempty: false
-          user:
-            $ref: "#/definitions/user"
-          user_id:
-            type: number
-            format: uint64
-            x-go-custom-tag: gorm:"foreignKey:fk_user_userRole_user_id"
-            x-omitempty: false
+  dataUser:
+    type: object
+    required:
+      - email
+      - password
+      - fullname
+    properties:
+      role:
+        $ref: '#/definitions/role'
+        x-go-custom-tag: gorm:"foreignKey:role_id;"
+      role_id:
+        type: number
+        format: uint64
+        x-go-custom-tag: gorm:"foreignKey:fk_userRole_role_role_id;"
+        x-omitempty: false
+      email:
+        type: string
+        x-go-custom-tag: gorm:"type:varchar(255); unique; notNull;"
+        x-omitempty: false
+        maxLength: 255
+      fullname:
+        type: string
+        x-go-custom-tag: gorm:"type:varchar(255);"
+        x-omitempty: false
+        maxLength: 255
+      password:
+        type: string
+        x-go-custom-tag: gorm:"type:varchar(255); notNull;"
+        x-omitempty: false
+        maxLength: 255
 
-  # end of models data
 # --End of definitions
 
 # --Start of parameters

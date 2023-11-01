@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/go-openapi/errors"
+	"github.com/ramadoiranedar/rest-goswagger-api/gen/models"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"gorm.io/driver/mysql"
@@ -35,7 +36,7 @@ func NewRuntime(conf *viper.Viper, log logrus.FieldLogger) (*Runtime, error) {
 	}
 
 	// Run auto migrate the database, if needed
-	// rt.RunMigration()
+	rt.RunMigration()
 
 	return rt, nil
 }
@@ -71,14 +72,11 @@ func (r *Runtime) GetError(err error) errors.Error {
 
 func (r *Runtime) RunMigration() {
 	r.Log.Infof("Migrating Database")
-	/*
-		*
-		*	Add code here to run database migrations.
-		*
-		r.DbMysql.AutoMigrate(
-			models.TODO,
-		)
-	*/
+
+	r.DbMysql.AutoMigrate(
+		models.Role{},
+		models.User{},
+	)
 }
 
 func setGormMysqlDB(conf *viper.Viper) (*gorm.DB, error) {

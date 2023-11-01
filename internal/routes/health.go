@@ -16,8 +16,8 @@ func setRouteHealth(rt *rest_goswagger_api.Runtime, api *operations.RestGoswagge
 		if err != nil {
 			errResponse := rt.GetError(err)
 			return app.NewGetHealthDefault(int(errResponse.Code())).WithPayload(&models.BasicResponse{
-				Code:    errResponse.Code(),
-				Message: errResponse.Error(),
+				Code:    models.Code(errResponse.Code()),
+				Message: models.Message(errResponse.Error()),
 			})
 		}
 

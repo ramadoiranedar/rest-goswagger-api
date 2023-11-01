@@ -9,9 +9,9 @@ import (
 
 // PayloadJWT represents the data stored in a JWT token
 type PayloadJWT struct {
-	UserID    string       `json:"user_id"`
+	UserID    uint64       `json:"user_id"`
 	Email     strfmt.Email `json:"email"`
-	Role      string       `json:"role"`
+	RoleSlug  string       `json:"role_slug"`
 	IssuedAt  time.Time    `json:"issued_at"`
 	ExpiredAt time.Time    `json:"expired_at"`
 }
@@ -21,7 +21,7 @@ func NewPayload(income *PayloadJWT, duration time.Duration) *PayloadJWT {
 	return &PayloadJWT{
 		UserID:    income.UserID,
 		Email:     income.Email,
-		Role:      income.Role,
+		RoleSlug:  income.RoleSlug,
 		IssuedAt:  time.Now(),
 		ExpiredAt: time.Now().Add(duration),
 	}

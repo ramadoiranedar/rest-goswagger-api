@@ -4,6 +4,9 @@ db:
   host: "127.0.0.1"
   user: "root"
   pass: "root"
-  port: "3306"
+  port: 3306
   name: "rest_goswagger_api"
 x_app_key: s3cr3t
+jwt:
+  secret: ""
+  expired: 86400

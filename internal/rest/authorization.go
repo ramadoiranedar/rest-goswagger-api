@@ -191,7 +191,7 @@ func parseToken(rt *rest_goswagger_api.Runtime, token string) (*jwt.PayloadJWT, 
 }
 
 func verifySingleRole(payload *jwt.PayloadJWT, role string) (*models.Principal, error) {
-	if payload.Role != role {
+	if payload.RoleSlug != role {
 		return nil, openapi_errors.New(403, "Forbidden: insufficient API key privileges")
 	}
 
@@ -199,7 +199,7 @@ func verifySingleRole(payload *jwt.PayloadJWT, role string) (*models.Principal, 
 		UserID:    payload.UserID,
 		ExpiredAt: payload.ExpiredAt.Unix(),
 		Email:     payload.Email,
-		Role:      payload.Role,
+		Role:      payload.RoleSlug,
 	}, nil
 }
 
