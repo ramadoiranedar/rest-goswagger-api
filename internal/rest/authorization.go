@@ -143,7 +143,7 @@ func setupRoleAuth(api *operations.RestGoswaggerAPIServerAPI, rt *rest_goswagger
 func setupRoleAuthPayloadJWT(api *operations.RestGoswaggerAPIServerAPI, rt *rest_goswagger_api.Runtime) {
 	// TODO: uncomment when some endpoint has implement that security
 	api.HasRoleAdminAuth = func(token string) (*models.Principal, error) {
-		return checkHasRoleAuthPayloadJWT(rt, constants.SLUG_ROLE_ADMIN, token)
+		return checkHasRoleAuthPayloadJWT(rt, constants.ROLE_SLUG_ADMIN, token)
 	}
 
 	// TODO: uncomment when some endpoint has implement that security

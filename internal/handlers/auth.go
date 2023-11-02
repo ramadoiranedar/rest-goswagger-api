@@ -86,7 +86,7 @@ func (h *handler) PostAuthRegistration(rt *rest_goswagger_api.Runtime, params *a
 			Email:    (*string)(&params.Email),
 			Fullname: &params.Fullname,
 			Password: &passwordHash,
-			RoleID:   constants.ROLE_ID_ADMIN,
+			RoleID:   constants.MAP_ROLE_ID[uint64(params.AuthType)],
 		},
 	}
 

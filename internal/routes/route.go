@@ -13,5 +13,6 @@ func Route(rt *rest_goswagger_api.Runtime, api *operations.RestGoswaggerAPIServe
 	setRouteHealth(rt, api, apiHandler)
 	setRouteAuth(rt, api, apiHandler)
 	setRouteRole(rt, api, apiHandler)
+	setRouteUser(rt, api, apiHandler)
 
 }

@@ -47,7 +47,7 @@ security:
 
 # paths
 paths:
-  # health
+  # path health
   /health:
     get:
       summary: "health check server"
@@ -111,9 +111,9 @@ paths:
           description: bad gateway
           schema:
             $ref: "#/definitions/basicResponse"
-  # End of health
+  # End of path health
 
-  # auth
+  # path auth
   /auth/login:
     post:
       summary: "authentication login"
@@ -197,6 +197,7 @@ paths:
         - $ref: "#/parameters/paramFormDataFullname"
         - $ref: "#/parameters/paramFormDataEmail"
         - $ref: "#/parameters/paramFormDataPassword"
+        - $ref: "#/parameters/paramFormDataAuthType"
       responses:
         default:
           description: default
@@ -246,12 +247,12 @@ paths:
           description: bad gateway
           schema:
             $ref: "#/definitions/basicResponse"
-  # End of auth
+  # End of path auth
 
-  # role
+  # path role
   /role:
     post:
-      summary: "create new role"
+      summary: "create a new role"
       description: "endpoint for create a new role"
       tags:
         - role
@@ -321,6 +322,8 @@ paths:
       parameters:
         - $ref: "#/parameters/paramQuerySort"
         - $ref: "#/parameters/paramQuerySortBy"
+        - $ref: "#/parameters/paramQuerySearchBy"
+        - $ref: "#/parameters/paramQuerySearchKeyword"
       responses:
         default:
           description: default
@@ -373,15 +376,15 @@ paths:
 
   /role/{id}:
     put:
-      summary: "update existing role"
-      description: "endpoint for update an existing role"
+      summary: "update existing role specified by id"
+      description: "endpoint for update an existing role specified by id"
       tags:
         - role
       security:
         - key: []
           hasRoleAdmin: []
       parameters:
-        - $ref: "#/parameters/paramPathIdUint"
+        - $ref: "#/parameters/paramPathIdUint64"
         - $ref: "#/parameters/paramFormDataName"
         - $ref: "#/parameters/paramFormDataSlug"
       responses:
@@ -434,15 +437,15 @@ paths:
           schema:
             $ref: "#/definitions/basicResponse"
     delete:
-      summary: "delete existing role"
-      description: "endpoint for delete an existing role"
+      summary: "delete existing role specified by id"
+      description: "endpoint for delete an existing role specified by id"
       tags:
         - role
       security:
         - key: []
           hasRoleAdmin: []
       parameters:
-        - $ref: "#/parameters/paramPathIdUint"
+        - $ref: "#/parameters/paramPathIdUint64"
       responses:
         default:
           description: default
@@ -501,7 +504,7 @@ paths:
         - key: []
           hasRoleAdmin: []
       parameters:
-        - $ref: "#/parameters/paramPathIdUint"
+        - $ref: "#/parameters/paramPathIdUint64"
       responses:
         default:
           description: default
@@ -551,9 +554,321 @@ paths:
           description: bad gateway
           schema:
             $ref: "#/definitions/basicResponse"
+  # End of path role
 
-  # End of role
+  # path user
+  /user:
+    post:
+      summary: "create a new user"
+      description: "endpoint for create a new user"
+      tags:
+        - user
+      security:
+        - key: []
+          hasRoleAdmin: []
+      parameters:
+        - $ref: "#/parameters/paramFormDataEmail"
+        - $ref: "#/parameters/paramFormDataPassword"
+        - $ref: "#/parameters/paramFormDataFullname"
+        - $ref: "#/parameters/paramFormDataAuthType"
+      responses:
+        default:
+          description: default
+          schema:
+            $ref: "#/definitions/basicResponse"
+        200:
+          description: ok
+          schema:
+            $ref: "#/definitions/basicResponse"
+        201:
+          description: created
+          schema:
+            $ref: "#/definitions/basicResponse"
+        400:
+          description: bad request
+          schema:
+            $ref: "#/definitions/basicResponse"
+        401:
+          description: unauthorized
+          schema:
+            $ref: "#/definitions/basicResponse"
+        403:
+          description: forbidden
+          schema:
+            $ref: "#/definitions/basicResponse"
+        404:
+          description: not found
+          schema:
+            $ref: "#/definitions/basicResponse"
+        405:
+          description: method not allowed
+          schema:
+            $ref: "#/definitions/basicResponse"
+        415:
+          description: unsupported media type
+          schema:
+            $ref: "#/definitions/basicResponse"
+        422:
+          description: unprocessable entity
+          schema:
+            $ref: "#/definitions/basicResponse"
+        500:
+          description: internal server error
+          schema:
+            $ref: "#/definitions/basicResponse"
+        502:
+          description: bad gateway
+          schema:
+            $ref: "#/definitions/basicResponse"
+    get:
+      summary: "get some user data"
+      description: "endpoint for get some user data"
+      tags:
+        - user
+      security:
+        - key: []
+          hasRoleAdmin: []
+      parameters:
+        - $ref: "#/parameters/paramQuerySort"
+        - $ref: "#/parameters/paramQuerySortBy"
+        - $ref: "#/parameters/paramQuerySearchBy"
+        - $ref: "#/parameters/paramQuerySearchKeyword"
+        - $ref: "#/parameters/paramQueryPaginationCurrentPage"
+        - $ref: "#/parameters/paramQueryPaginationPerPage"
+      responses:
+        default:
+          description: default
+          schema:
+            $ref: "#/definitions/basicResponse"
+        200:
+          description: ok
+          schema:
+            $ref: "#/definitions/getUserResponse"
+        201:
+          description: created
+          schema:
+            $ref: "#/definitions/basicResponse"
+        400:
+          description: bad request
+          schema:
+            $ref: "#/definitions/basicResponse"
+        401:
+          description: unauthorized
+          schema:
+            $ref: "#/definitions/basicResponse"
+        403:
+          description: forbidden
+          schema:
+            $ref: "#/definitions/basicResponse"
+        404:
+          description: not found
+          schema:
+            $ref: "#/definitions/basicResponse"
+        405:
+          description: method not allowed
+          schema:
+            $ref: "#/definitions/basicResponse"
+        415:
+          description: unsupported media type
+          schema:
+            $ref: "#/definitions/basicResponse"
+        422:
+          description: unprocessable entity
+          schema:
+            $ref: "#/definitions/basicResponse"
+        500:
+          description: internal server error
+          schema:
+            $ref: "#/definitions/basicResponse"
+        502:
+          description: bad gateway
+          schema:
+            $ref: "#/definitions/basicResponse"
 
+  /user/{id}:
+    put:
+      summary: "update existing user specified by id"
+      description: "endpoint for update existing user specified by id"
+      tags:
+        - user
+      security:
+        - key: []
+          hasRoleAdmin: []
+      parameters:
+        - $ref: "#/parameters/paramPathIdUint64"
+        - $ref: "#/parameters/paramFormDataEmail"
+        - $ref: "#/parameters/paramFormDataPassword"
+        - $ref: "#/parameters/paramFormDataFullname"
+        - $ref: "#/parameters/paramFormDataAuthType"
+      responses:
+        default:
+          description: default
+          schema:
+            $ref: "#/definitions/basicResponse"
+        200:
+          description: ok
+          schema:
+            $ref: "#/definitions/basicResponse"
+        201:
+          description: created
+          schema:
+            $ref: "#/definitions/basicResponse"
+        400:
+          description: bad request
+          schema:
+            $ref: "#/definitions/basicResponse"
+        401:
+          description: unauthorized
+          schema:
+            $ref: "#/definitions/basicResponse"
+        403:
+          description: forbidden
+          schema:
+            $ref: "#/definitions/basicResponse"
+        404:
+          description: not found
+          schema:
+            $ref: "#/definitions/basicResponse"
+        405:
+          description: method not allowed
+          schema:
+            $ref: "#/definitions/basicResponse"
+        415:
+          description: unsupported media type
+          schema:
+            $ref: "#/definitions/basicResponse"
+        422:
+          description: unprocessable entity
+          schema:
+            $ref: "#/definitions/basicResponse"
+        500:
+          description: internal server error
+          schema:
+            $ref: "#/definitions/basicResponse"
+        502:
+          description: bad gateway
+          schema:
+            $ref: "#/definitions/basicResponse"
+    delete:
+      summary: "delete existing user specified by id"
+      description: "endpoint for delete an existing user specified by id"
+      tags:
+        - user
+      security:
+        - key: []
+          hasRoleAdmin: []
+      parameters:
+        - $ref: "#/parameters/paramPathIdUint64"
+      responses:
+        default:
+          description: default
+          schema:
+            $ref: "#/definitions/basicResponse"
+        200:
+          description: ok
+          schema:
+            $ref: "#/definitions/basicResponse"
+        201:
+          description: created
+          schema:
+            $ref: "#/definitions/basicResponse"
+        400:
+          description: bad request
+          schema:
+            $ref: "#/definitions/basicResponse"
+        401:
+          description: unauthorized
+          schema:
+            $ref: "#/definitions/basicResponse"
+        403:
+          description: forbidden
+          schema:
+            $ref: "#/definitions/basicResponse"
+        404:
+          description: not found
+          schema:
+            $ref: "#/definitions/basicResponse"
+        405:
+          description: method not allowed
+          schema:
+            $ref: "#/definitions/basicResponse"
+        415:
+          description: unsupported media type
+          schema:
+            $ref: "#/definitions/basicResponse"
+        422:
+          description: unprocessable entity
+          schema:
+            $ref: "#/definitions/basicResponse"
+        500:
+          description: internal server error
+          schema:
+            $ref: "#/definitions/basicResponse"
+        502:
+          description: bad gateway
+          schema:
+            $ref: "#/definitions/basicResponse"
+    get:
+      summary: "get existing user specified by id"
+      description: "endpoint for get an existing user specified by id"
+      tags:
+        - user
+      security:
+        - key: []
+          hasRoleAdmin: []
+      parameters:
+        - $ref: "#/parameters/paramPathIdUint64"
+        - $ref: "#/parameters/paramQueryWithPassword"
+      responses:
+        default:
+          description: default
+          schema:
+            $ref: "#/definitions/basicResponse"
+        200:
+          description: ok
+          schema:
+            $ref: "#/definitions/getUserIdResponse"
+        201:
+          description: created
+          schema:
+            $ref: "#/definitions/basicResponse"
+        400:
+          description: bad request
+          schema:
+            $ref: "#/definitions/basicResponse"
+        401:
+          description: unauthorized
+          schema:
+            $ref: "#/definitions/basicResponse"
+        403:
+          description: forbidden
+          schema:
+            $ref: "#/definitions/basicResponse"
+        404:
+          description: not found
+          schema:
+            $ref: "#/definitions/basicResponse"
+        405:
+          description: method not allowed
+          schema:
+            $ref: "#/definitions/basicResponse"
+        415:
+          description: unsupported media type
+          schema:
+            $ref: "#/definitions/basicResponse"
+        422:
+          description: unprocessable entity
+          schema:
+            $ref: "#/definitions/basicResponse"
+        500:
+          description: internal server error
+          schema:
+            $ref: "#/definitions/basicResponse"
+        502:
+          description: bad gateway
+          schema:
+            $ref: "#/definitions/basicResponse"
+  # End of  path user
 
 # --End of paths
 
@@ -654,6 +969,31 @@ definitions:
         type: array
         items:
           $ref: "#/definitions/role"
+  getUserResponse:
+    type: object
+    properties:
+      code: 
+        $ref: "#/definitions/code"
+      message:
+        $ref: "#/definitions/message"
+      data:
+        type: array
+        items:
+          $ref: "#/definitions/userExcludePassword"
+      metadata:
+        type: object
+        properties:
+          pagination:
+            $ref: "#/definitions/pagination"
+  getUserIdResponse:
+    type: object
+    properties:
+      code: 
+        $ref: "#/definitions/code"
+      message:
+        $ref: "#/definitions/message"
+      data:
+        $ref: "#/definitions/user"
 
   # model utility
   payload_jwt:
@@ -682,19 +1022,19 @@ definitions:
     properties:
       current_page:
         type: integer
-        x-omitempty: true
+        x-omitempty: false
         example: 1
       per_page:
         type: integer
-        x-omitempty: true
+        x-omitempty: false
         example: 10
       total_data:
         type: integer
-        x-omitempty: true
+        x-omitempty: false
         example: 100
       total_page:
         type: integer
-        x-omitempty: true
+        x-omitempty: false
         example: 10
   # End of model utility
 
@@ -754,6 +1094,11 @@ definitions:
       - $ref: "#/definitions/modelTimeTrace"
       - $ref: "#/definitions/modelIdentifier"
       - $ref: "#/definitions/dataUser"
+  userExcludePassword:
+    allOf:
+      - $ref: "#/definitions/modelTimeTrace"
+      - $ref: "#/definitions/modelIdentifier"
+      - $ref: "#/definitions/dataUserExcludePassword"
   dataUser:
     type: object
     required:
@@ -784,7 +1129,7 @@ definitions:
         x-go-custom-tag: gorm:"type:varchar(255); notNull;"
         x-omitempty: false
         maxLength: 255
-  dataUserExludePassword:
+  dataUserExcludePassword:
     type: object
     required:
       - email
@@ -813,8 +1158,8 @@ definitions:
 
 # --parameters
 parameters:
-  # global
-  paramPathIdUint:
+  # param global
+  paramPathIdUint64:
     name: id
     in: path
     type: integer
@@ -840,11 +1185,42 @@ parameters:
     in: query
     type: string
     maxLength: 255
-    default: id
+    default: created_at
     required: false
-  # End of global
+  paramQuerySearchBy:
+    name: search_by
+    in: query
+    type: string
+    required: false
+  paramQuerySearchKeyword:
+    name: search_keyword
+    in: query
+    type: string
+    required: false
+  paramQueryPaginationCurrentPage:
+    name: current_page
+    in: query
+    type: integer
+    required: false
+    default: 1
+  paramQueryPaginationPerPage:
+    name: per_page
+    in: query
+    type: integer
+    required: false
+    default: 10
+  paramFormDataAuthType:
+    name: auth_type
+    in: formData
+    type: integer
+    required: true
+    enum:
+      - 1
+      - 2
+      - 3
+  # End of param global
 
-  # role
+  # param role
   paramFormDataSlug:
     name: slug
     in: formData
@@ -852,9 +1228,9 @@ parameters:
     minLength: 5
     maxLength: 255
     required: true
-  # End of role
+  # End of param role
 
-  # user
+  # param user
   paramFormDataFullname:
     name: fullname
     in: formData
@@ -876,7 +1252,12 @@ parameters:
     minLength: 5
     maxLength: 255
     required: true
-  # End of user
+  paramQueryWithPassword:
+    name: with_password
+    in: query
+    type: boolean
+    required: true
+  # End of param user
 
 # --End of parameters
 

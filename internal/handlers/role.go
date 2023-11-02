@@ -8,6 +8,7 @@ import (
 	"github.com/ramadoiranedar/rest-goswagger-api/gen/models"
 	"github.com/ramadoiranedar/rest-goswagger-api/gen/restapi/operations/role"
 	"github.com/ramadoiranedar/rest-goswagger-api/internal/utils/constants"
+	utils_query "github.com/ramadoiranedar/rest-goswagger-api/internal/utils/query"
 )
 
 func (h *handler) PostRole(rt *rest_goswagger_api.Runtime, params *role.PostRoleParams) (response *models.BasicResponse, err error) {
@@ -68,7 +69,7 @@ func (h *handler) DeleteRoleID(rt *rest_goswagger_api.Runtime, params *role.Dele
 		return
 	}
 	if db.RowsAffected < 1 {
-		err = rt.SetError(http.StatusUnprocessableEntity, constants.MSG_ROLE_NOT_EXISTS)
+		err = rt.SetError(http.StatusUnprocessableEntity, fmt.Sprintf(constants.MSG_NOT_EXISTS, "role"))
 		return
 	}
 
@@ -100,12 +101,13 @@ func (h *handler) GetRoleID(rt *rest_goswagger_api.Runtime, params *role.GetRole
 func (h *handler) GetRole(rt *rest_goswagger_api.Runtime, params *role.GetRoleParams) (response *models.GetRoleResponse, err error) {
 	var (
 		role = []*models.Role{}
-		db   = rt.DbMysql.Model(&role)
+		db   = *rt.DbMysql.Model(&role)
 	)
 
-	if params.Sort != nil && params.SortBy != nil {
-		orderBy := fmt.Sprintf("%s %s", *params.SortBy, *params.Sort)
-		db = db.Order(orderBy)
+	utils_query.ApplySorting(&db, params.Sort, params.SortBy)
+	err = utils_query.ApplySearch(rt, &db, params.SearchBy, params.SearchKeyword)
+	if err != nil {
+		return
 	}
 
 	if err = db.Find(&role).Error; err != nil {

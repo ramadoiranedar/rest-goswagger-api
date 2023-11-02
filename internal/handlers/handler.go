@@ -5,6 +5,7 @@ import (
 	"github.com/ramadoiranedar/rest-goswagger-api/gen/models"
 	"github.com/ramadoiranedar/rest-goswagger-api/gen/restapi/operations/auth"
 	"github.com/ramadoiranedar/rest-goswagger-api/gen/restapi/operations/role"
+	"github.com/ramadoiranedar/rest-goswagger-api/gen/restapi/operations/user"
 )
 
 type handler struct{}
@@ -14,6 +15,7 @@ type Handler interface {
 	HealthHandler
 	AuthHandler
 	RoleHandler
+	UserHandler
 }
 
 // TODO: handlers
@@ -32,6 +34,14 @@ type RoleHandler interface {
 	DeleteRoleID(rt *rest_goswagger_api.Runtime, params *role.DeleteRoleIDParams) (response *models.BasicResponse, err error)
 	GetRoleID(rt *rest_goswagger_api.Runtime, params *role.GetRoleIDParams) (response *models.GetRoleIDResponse, err error)
 	GetRole(rt *rest_goswagger_api.Runtime, params *role.GetRoleParams) (response *models.GetRoleResponse, err error)
+}
+
+type UserHandler interface {
+	PostUser(rt *rest_goswagger_api.Runtime, params *user.PostUserParams) (response *models.BasicResponse, err error)
+	PutUserID(rt *rest_goswagger_api.Runtime, params *user.PutUserIDParams) (response *models.BasicResponse, err error)
+	DeleteUserID(rt *rest_goswagger_api.Runtime, params *user.DeleteUserIDParams) (response *models.BasicResponse, err error)
+	GetUserID(rt *rest_goswagger_api.Runtime, params *user.GetUserIDParams) (response *models.GetUserIDResponse, err error)
+	GetUser(rt *rest_goswagger_api.Runtime, params *user.GetUserParams) (response *models.GetUserResponse, err error)
 }
 
 func NewHandler() Handler {

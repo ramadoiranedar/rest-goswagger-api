@@ -54,7 +54,7 @@ From [GoSwagger](https://github.com/go-swagger/go-swagger): `go-swagger`` brings
 - Authorization
 - Routing
 - Database mysql
-- Configuration file (eg. environtment or secret, credentials)
+- Configuration file (eg. environment or secret, credentials)
 - Generated files and folders
 - ORM ([Gorm](https://github.com/go-gorm/gorm))
 - ...
