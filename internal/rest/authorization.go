@@ -185,7 +185,7 @@ func parseToken(rt *rest_goswagger_api.Runtime, token string) (*jwt.PayloadJWT, 
 
 	payload, err := maker.VerifyToken(token)
 	if err != nil {
-		return nil, rt.SetError(http.StatusUnauthorized, "invalid API key token: %v", err)
+		return nil, rt.SetError(http.StatusUnauthorized, fmt.Sprintf("jwt invalid key token: %s", err.Error()))
 	}
 
 	return payload, nil
