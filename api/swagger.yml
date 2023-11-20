@@ -870,6 +870,81 @@ paths:
             $ref: "#/definitions/basicResponse"
   # End of  path user
 
+  # path themoviedb
+  /movie/trending:
+    get:
+      summary: "get trending list movie data"
+      description: "endpoint for get trending list movie data"
+      tags:
+        - movie
+      security:
+        - key: []
+          hasRoleAdmin: []
+      parameters:
+        - name: time_window
+          in: query
+          type: string
+          enum:
+            - day
+            - week
+          default: day
+        - name: language
+          in: query
+          type: string
+          default: en-US
+      responses:
+        default:
+          description: default
+          schema:
+            $ref: "#/definitions/basicResponse"
+        200:
+          description: ok
+          schema:
+            $ref: "#/definitions/getListTrendingMoviesResponse"
+        201:
+          description: created
+          schema:
+            $ref: "#/definitions/basicResponse"
+        400:
+          description: bad request
+          schema:
+            $ref: "#/definitions/basicResponse"
+        401:
+          description: unauthorized
+          schema:
+            $ref: "#/definitions/basicResponse"
+        403:
+          description: forbidden
+          schema:
+            $ref: "#/definitions/basicResponse"
+        404:
+          description: not found
+          schema:
+            $ref: "#/definitions/basicResponse"
+        405:
+          description: method not allowed
+          schema:
+            $ref: "#/definitions/basicResponse"
+        415:
+          description: unsupported media type
+          schema:
+            $ref: "#/definitions/basicResponse"
+        422:
+          description: unprocessable entity
+          schema:
+            $ref: "#/definitions/basicResponse"
+        500:
+          description: internal server error
+          schema:
+            $ref: "#/definitions/basicResponse"
+        502:
+          description: bad gateway
+          schema:
+            $ref: "#/definitions/basicResponse"
+
+  
+  # End of path themoviedb
+
 # --End of paths
 
 # --definitions
@@ -994,7 +1069,55 @@ definitions:
         $ref: "#/definitions/message"
       data:
         $ref: "#/definitions/user"
-
+  getListTrendingMoviesResponse:
+    type: object
+    properties:
+      page:
+        type: integer
+      total_pages:
+        type: integer
+      total_results:
+        type: integer
+      results:
+        type: array
+        items:
+          $ref: "#/definitions/getListTrendingMoviesResults"
+  getListTrendingMoviesResults:
+    type: object
+    properties: 
+      adult:
+        type: boolean
+      backdrop_path:
+        type: string
+      id:
+        type: integer
+      title:
+        type: string
+      original_language:
+        type: string
+      original_title:
+        type: string
+      overview:
+        type: string
+      poster_path:
+        type: string
+      media_type:
+        type: string
+      genre_ids:
+        type: array
+        items:
+          type: integer
+      popularity:
+        type: number
+      release_date:
+        type: string
+      video:
+        type: boolean
+      vote_average:
+        type: number
+      vote_count:
+        type: integer
+  
   # model utility
   payload_jwt:
     type: object

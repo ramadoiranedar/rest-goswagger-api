@@ -4,6 +4,7 @@ import (
 	rest_goswagger_api "github.com/ramadoiranedar/rest-goswagger-api"
 	"github.com/ramadoiranedar/rest-goswagger-api/gen/models"
 	"github.com/ramadoiranedar/rest-goswagger-api/gen/restapi/operations/auth"
+	"github.com/ramadoiranedar/rest-goswagger-api/gen/restapi/operations/movie"
 	"github.com/ramadoiranedar/rest-goswagger-api/gen/restapi/operations/role"
 	"github.com/ramadoiranedar/rest-goswagger-api/gen/restapi/operations/user"
 )
@@ -16,6 +17,7 @@ type Handler interface {
 	AuthHandler
 	RoleHandler
 	UserHandler
+	MovieHandler
 }
 
 // TODO: handlers
@@ -42,6 +44,10 @@ type UserHandler interface {
 	DeleteUserID(rt *rest_goswagger_api.Runtime, params *user.DeleteUserIDParams) (response *models.BasicResponse, err error)
 	GetUserID(rt *rest_goswagger_api.Runtime, params *user.GetUserIDParams) (response *models.GetUserIDResponse, err error)
 	GetUser(rt *rest_goswagger_api.Runtime, params *user.GetUserParams) (response *models.GetUserResponse, err error)
+}
+
+type MovieHandler interface {
+	GetMovie(rt *rest_goswagger_api.Runtime, params *movie.GetMovieTrendingParams) (response *models.GetListTrendingMoviesResponse, err error)
 }
 
 func NewHandler() Handler {

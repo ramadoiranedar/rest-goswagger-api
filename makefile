@@ -39,7 +39,8 @@ gen-server: validate make-gen
 # 		swagger generate client -A for-example1-server -f ./api/example1.yml -c pkg/client -m ./gen /model
 # 		swagger generate client -A for-example2-server -f ./api/example2.yml -c pkg/client -m ./gen /model
 gen-client: validate	
-	swagger generate client -A rest-goswagger-api-server -f ./api/swagger.yml -c pkg/client -m ./gen /models --principal models.Principal
+	swagger generate client -A rest-goswagger-api-server -f ./api/swagger.yml -c pkg/client/rest_goswagger_api_client -m ./gen/models --principal models.Principal
+	swagger generate client -A themoviedb -f ./api/themoviedb.yml -c pkg/client/themoviedb_client -m ./gen/model --principal models.Principal
 
 # cleaning or remove unused object, generated, cached files
 clean: remove-executable-server remove-gen remove-pkg

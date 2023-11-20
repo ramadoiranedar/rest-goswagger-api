@@ -1,0 +1,117 @@
+# Swagger OpenAPI v2
+# note: 
+# please make sure naming of the components based on definition object name
+# and follow the code style
+swagger: "2.0"
+info:
+  description: "For Consume movie data OPEN API from themoviedb.org"
+  title: "The Movie DB OPEN API (themoviedb.org)"
+  version: "1.0.0"
+produces:
+  - application/json
+consumes:
+  - application/json
+schemes:
+  - http
+host: "api.themoviedb.org" #base url
+securityDefinitions:
+  key:
+    type: "apiKey"
+    in: "header"
+    name: "Authorization"
+security:
+  - key: []
+paths:
+  /3/trending/movie/{time_window}:
+    get:
+      summary: "Trending Movies"
+      description: "Get the trending movies on TMDB."
+      tags:
+        - Trending
+      security:
+        - key: []
+      parameters:
+        - name: time_window
+          in: path
+          type: string
+          required: true
+          enum:
+            - day
+            - week
+          default: day
+      responses:
+        default:
+          description: default
+          schema:
+            $ref: "#/definitions/basicResponse"
+        200:
+          description: ok
+          schema:
+            $ref: "#/definitions/getListTrendingMoviesResponse"
+
+definitions:
+  code:
+    type: integer
+    format: int32
+    x-omitempty: true
+  message:
+    type: string
+    x-omitempty: true
+  basicResponse:
+    description: definition for basic response code & message when request to endpoint was successful
+    type: object
+    properties:
+      code:
+        $ref: "#/definitions/code"
+      message:
+        $ref: "#/definitions/message"
+  getListTrendingMoviesResponse:
+    type: object
+    properties:
+      page:
+        type: integer
+      total_pages:
+        type: integer
+      total_results:
+        type: integer
+      results:
+        type: array
+        items:
+          $ref: "#/definitions/getListTrendingMoviesResults"
+
+  getListTrendingMoviesResults:
+    type: object
+    properties: 
+      adult:
+        type: boolean
+      backdrop_path:
+        type: string
+      id:
+        type: integer
+      title:
+        type: string
+      original_language:
+        type: string
+      original_title:
+        type: string
+      overview:
+        type: string
+      poster_path:
+        type: string
+      media_type:
+        type: string
+      genre_ids:
+        type: array
+        items:
+          type: integer
+      popularity:
+        type: number
+      release_date:
+        type: string
+      video:
+        type: boolean
+      vote_average:
+        type: number
+      vote_count:
+        type: integer
+  

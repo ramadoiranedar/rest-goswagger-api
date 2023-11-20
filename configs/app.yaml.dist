@@ -10,3 +10,8 @@ x_app_key: s3cr3t
 jwt:
   secret: ""
   expired: 86400
+themoviedb:
+  base_url: "api.themoviedb.org"
+  key:
+  auth:
+  timeout: 60
