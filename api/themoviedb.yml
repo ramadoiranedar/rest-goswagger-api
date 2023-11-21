@@ -39,6 +39,10 @@ paths:
             - day
             - week
           default: day
+        - name: language
+          in: query
+          type: string
+          default: en-US
       responses:
         default:
           description: default
