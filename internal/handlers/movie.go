@@ -14,8 +14,8 @@ import (
 
 func (h *handler) GetMovie(rt *rest_goswagger_api.Runtime, params *movie.GetMovieTrendingParams) (response *models.GetListTrendingMoviesResponse, err error) {
 
-	theMovieDbClient := utils_api.GetTheMovieDbClientSDK(utils_api.GetTheMovieDbUrl(rt, rt.Conf.GetString("themoviedb.base_url")))
-	ctx, cancel := utils_api.GetContextTimeout(context.Background(), rt)
+	theMovieDbClient := utils_api.GetTheMovieDbClientSDK(rt.Conf.GetString("themoviedb.base_url"))
+	ctx, cancel := utils_api.GetTheMovieContextTimeout(context.Background(), rt)
 	defer cancel()
 
 	responseTheMovieDbService, err := theMovieDbClient.Trending.Get3TrendingMovieTimeWindow(&trending.Get3TrendingMovieTimeWindowParams{
