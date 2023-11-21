@@ -6,7 +6,7 @@ db:
   pass: "root"
   port: 3306
   name: "rest_goswagger_api"
-x_app_key: s3cr3t
+x_app_key: MYKEY
 jwt:
   secret: ""
   expired: 86400
